@@ -1,0 +1,76 @@
+.dialog-wrapper {
+    margin: 0 auto;
+    padding: 2em;
+    width: 400px;
+    h4 {
+        margin-bottom: 32px;
+    }
+    h6 {
+        font-size: 14px;
+        font-weight: 500;
+    }
+    .note {
+        color: #6D7E8B;
+    }
+    .radio-btn {
+        justify-content: flex-start;
+        grid-gap: 1em;
+        margin: 0 0 2em 0.7em;
+    }
+    .radio-btn input {
+        position: relative;
+        appearance: none;
+    }
+    .radio-btn input::before {
+        position: absolute;
+        content: "";
+        height: 1.25em;
+        width: 1.25em;
+        border: 2px solid #000;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        transition: 0.3s all ease;
+    }
+    .radio-btn input:checked::before {
+        display: none;
+    }
+    .radio-btn input:checked::after {
+        position: absolute;
+        content: url("../../../../assets/tick.svg");
+        color: #0d1d28;
+        cursor: pointer;
+        top: -0.8em;
+        left: -0.9em;
+    }
+    .other-reason-container {
+        padding: 1.25em 1.25em 0.7em;
+        border-radius: 12px;
+        border: 1px solid #e7ecef;
+        color: #6D7E8B;
+        width: 100%;
+        min-height: 6em;
+        font-size: 14px;
+        background-color: #F2F5F8;
+    }
+    .custom-radio-btn input {
+        display: none;
+    }
+    .custom-radio-btn div {
+        border: 1px solid #8d9da8;
+        border-radius: 38px;
+        padding: 10px 20px;
+        color: #8d9da8;
+        margin: 0 0.4em 0.5em 0;
+        font-size: 15px;
+        cursor: pointer;
+    }
+    .custom-radio-btn input:checked+div {
+        border: none;
+        color: #0d1d28;
+        border: 1px solid #fcd400;
+        background-color: #fcd400;
+    }
+}

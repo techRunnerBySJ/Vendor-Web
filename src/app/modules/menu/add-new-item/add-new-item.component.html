@@ -1,0 +1,359 @@
+<div class="modal hide drawer right-align" id="addNewItemModalRight" role="dialog" aria-labelledby="addNewItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label class="modal-title border-0 text-uppercase">{{modalData.actionType}} Item</label>
+                <span class="d-flex justify-content-center align-items-center">
+                    <button class="buttons buttons--yellow" *ngIf="itemDetails?.variantGroupRow?.length > 1" (click)="openVariantGroupSequenceModal()" mat-button
+                        title="Change Variant Group Sequence"><img src="../../../assets/icons/sequence-icon.svg" alt="">
+                        Variant Group</button>
+
+                    <mat-icon class="ms-3" (click)="close()" data-dismiss="modal">close</mat-icon>
+                </span>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="itemActionForm" class="gap-2">
+                    <!-- form title -->
+                    <header>
+                        <label><b>Kindly fill up the basic details to continue !!!</b></label>
+                    </header>
+
+                    <!-- form input fields -->
+                    <div class="row">
+                        <div class="input-details col-6">
+                            <label class="input-heading mt-4">Category</label>
+                            <ng-select [items]="categoryList" bindValue="categoryId" bindLabel="categoryName" placeholder="Select Category" formControlName="categoryId" (change)="setSubCategories($event.categoryId)"></ng-select>
+                            <app-form-error-msg [control]="itemActionForm.controls.categoryId">
+                            </app-form-error-msg>
+                        </div>
+                        <div class="input-details col-6">
+                            <label class="input-heading mt-4">Sub-Category</label>
+                            <ng-select [items]="subCategoryList" bindValue="subCategoryId" bindLabel="subCategoryName" formControlName="subCategoryId" placeholder="Select Sub-Category"></ng-select>
+                            <app-form-error-msg [control]="itemActionForm.controls.subCategoryId">
+                            </app-form-error-msg>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-details col-8">
+                            <label class="input-heading mt-4">Item Name</label>
+                            <mat-form-field appearance="outline">
+                                <input matInput formControlName="itemName" type="text" placeholder="Enter name" />
+                            </mat-form-field>
+                            <app-form-error-msg [control]="itemActionForm.controls.itemName"></app-form-error-msg>
+                        </div>
+                        <div class="input-details col-4">
+                            <label class="input-heading mt-4">Item Type</label>
+                            <ng-select [items]="foodTypes | keyvalue: originalOrder" bindValue="key" bindLabel="value" formControlName="foodType" placeholder="Select type"></ng-select>
+                            <app-form-error-msg [control]="itemActionForm.controls.foodType">
+                            </app-form-error-msg>
+                        </div>
+                    </div>
+                    <div class="input-details">
+                        <label class="input-heading mt-4">Description</label>
+                        <mat-form-field appearance="outline">
+                            <textarea matInput formControlName="description" type="text" placeholder="Enter description"></textarea>
+                        </mat-form-field>
+                        <app-form-error-msg [control]="itemActionForm.controls.description"></app-form-error-msg>
+                    </div>
+                    <ng-container *ngIf="showPackagingCharges">
+                        <label class="input-heading">PLEASE NOTE THE SLAB</label>
+                        <table class="slab">
+                            <thead>
+                                <th>ITEM PRICE (INR)</th>
+                                <th>MAX. CHARGES</th>
+                            </thead>
+                            <tr *ngFor="let item of packagingChargesSlabs">
+                                <td>{{item.minPrice}} - {{item.maxPrice}}</td>
+                                <td>{{item.maxCharges}}</td>
+                            </tr>
+                        </table>
+                    </ng-container>
+                    <div class="row">
+                        <div class="input-details col-4">
+                            <label class="input-heading mt-4">Item Price (&#8377;)</label>
+                            <mat-form-field appearance="outline">
+                                <input matInput formControlName="itemPrice" type="text" placeholder="Enter Price" appAllowTwoDecimalNumbers />
+                            </mat-form-field>
+                            <app-form-error-msg [control]="itemActionForm.controls.itemPrice"></app-form-error-msg>
+                        </div>
+                        <div class="input-details col-4">
+                            <label class="input-heading mt-4">Packaging Charges (&#8377;)</label>
+                            <mat-form-field appearance="outline">
+                                <input matInput formControlName="packagingCharges" type="text" placeholder="Enter Amount" appAllowTwoDecimalNumbers />
+                            </mat-form-field>
+                            <app-form-error-msg [control]="itemActionForm.controls.packagingCharges"></app-form-error-msg>
+                        </div>
+                        <div class="input-details col-4">
+                            <label class="input-heading mt-4">Serves How Many?</label>
+                            <mat-form-field appearance="outline">
+                                <input matInput formControlName="servesHowMany" type="number" placeholder="Enter" />
+                            </mat-form-field>
+                            <app-form-error-msg [control]="itemActionForm.controls.servesHowMany"></app-form-error-msg>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-details col-4">
+                            <label class="input-heading mt-4">Is GST Inclusive?</label>
+                            <div class="radio-btn ms-2">
+                                <input type="radio" [value]="true" formControlName="isGstInclusive" (change)="gstSelectionChange()">
+                                <span class="me-3">Yes</span>
+                                <input type="radio" [value]="false" formControlName="isGstInclusive" (change)="gstSelectionChange()">
+                                <span class="me-3">No</span>
+                            </div>
+                            <app-form-error-msg [control]="itemActionForm.controls.isGstInclusive"></app-form-error-msg>
+                        </div>
+                        <div class="input-details col-3">
+                            <label class="input-heading mt-4">Is Item Spicy?</label>
+                            <div class="radio-btn ms-2">
+                                <input type="radio" [value]="true" formControlName="isSpicy">
+                                <span class="me-3">Yes</span>
+                                <input type="radio" [value]="false" formControlName="isSpicy">
+                                <span class="me-3">No</span>
+                            </div>
+                            <app-form-error-msg [control]="itemActionForm.controls.isSpicy"></app-form-error-msg>
+                        </div>
+
+                        <div class="input-details col-5">
+                            <label class="input-heading mt-4">Allow Long Distance?</label>
+                            <div class="radio-btn ms-2">
+                                <input type="radio" [value]="true" formControlName="allowLongDistance">
+                                <span class="me-3">Yes</span>
+                                <input type="radio" [value]="false" formControlName="allowLongDistance">
+                                <span class="me-3">No</span>
+                            </div>
+                            <app-form-error-msg [control]="itemActionForm.controls.allowLongDistance"></app-form-error-msg>
+                        </div>
+                        <div class="input-details col-6">
+                            <label class="input-heading mt-4">GST Rate (%)</label>
+                            <mat-form-field appearance="outline">
+                                <input class="w-75" matInput formControlName="gst" type="text" placeholder="Enter GST rate" appAllowTwoDecimalNumbers />
+                                <span matSuffix>%</span>
+                            </mat-form-field>
+                            <app-form-error-msg [control]="itemActionForm.controls.gst"></app-form-error-msg>
+                        </div>
+                        <div class="input-details col-4" *ngIf="service === Services.Grocery">
+                            <label class="input-heading mt-4">Item weight in Grams</label>
+                            <mat-form-field appearance="outline">
+                                <input class="" matInput formControlName="weightGrams" type="number" placeholder="Enter item weight" />
+                            </mat-form-field>
+                            <app-form-error-msg [control]="itemActionForm.controls.weightGrams"></app-form-error-msg>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-details col-6">
+                            <label class="input-heading mt-4">Add Item Photo</label>
+                            <mat-form-field appearance="outline">
+                                <input [hidden]="true" (change)="getFileUploadUrl($event.target.files)" type="file" accept="all/*" #itemDoc>
+                                <input type="text" readonly matInput formControlName="itemImage" />
+                                <button matSuffix *ngIf="!modalData.disableAll" (click)="itemDoc.click();" mat-raised-button class="upload-button">
+                                    upload
+                                </button>
+                            </mat-form-field>
+                            <app-form-error-msg [control]="itemActionForm.controls.itemImage"></app-form-error-msg>
+                        </div>
+                        <div class="col-6">
+                            <img width="135" height="135" [src]=itemImageUrl alt="item-image" *ngIf="itemImageUrl">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-details col-6">
+                            <label class="input-heading mt-4">Do you want to add variants?</label>
+
+                            <div class="radio-btn ms-2">
+                                <input type="radio" [value]="true" formControlName="addVariantsChoice" (change)="onAddVariantsSelection()">
+                                <span class="me-3">Yes</span>
+                                <input type="radio" [value]="false" formControlName="addVariantsChoice" (change)="onAddVariantsSelection()">
+                                <span class="me-3">No</span>
+                            </div>
+                            <app-form-error-msg [control]="itemActionForm.controls.addVariantsChoice"></app-form-error-msg>
+                        </div>
+                    </div>
+                    <hr *ngIf="checkVariantGroupArrLength()">
+                    <div formArrayName="variantGroupRow" *ngIf="checkVariantGroupArrLength()">
+                        <div *ngFor="let row of itemActionForm['controls']['variantGroupRow']['controls']  ; let i=index" [formGroupName]="i">
+                            <a *ngIf="itemActionForm.get('variantGroupRow')['controls'].length > 1 && !modalData.disableAll" (click)="deleteVariantGroup(i)" class="float-end"><b>Delete this
+                                    Variant Group</b></a>
+                                    <button class="buttons buttons--yellow" *ngIf="row?.controls?.variantRow?.length > 1" (click)="openVariantSequenceModal(row['controls']['variantGroupId'].value)" mat-button title="Change Variant Sequence">
+                                        <img src="../../../assets/icons/sequence-icon.svg" alt="">
+                                      </button>
+                                      
+                            <div class="input-details">
+                                <label class="input-heading mt-4">Group Name</label>
+                                <mat-form-field appearance="outline">
+                                    <input matInput formControlName="variantGroupName" type="text" placeholder="Enter group name" />
+                                </mat-form-field>
+                                <app-form-error-msg [control]="itemActionForm.get('variantGroupRow')['controls'][i]['controls']['variantGroupName']">
+                                </app-form-error-msg>
+                            </div>
+                            <div formArrayName="variantRow">
+                                <div class="row align-items-center variants" *ngFor="let variant of row['controls']['variantRow']['controls']; let j=index" [formGroupName]="j">
+                                    <div class="input-details col-4">
+                                        <label class="input-heading">Variant Name</label>
+                                        <mat-form-field appearance="outline">
+                                            <input matInput formControlName="variantName" type="text" placeholder="Enter name" />
+                                        </mat-form-field>
+                                        <app-form-error-msg [control]="row.get('variantRow')['controls'][j]['controls']['variantName']">
+                                        </app-form-error-msg>
+                                    </div>
+                                    <div class="input-details col-4">
+                                        <label class="input-heading">Veg/ Non-Veg</label>
+                                        <ng-select formControlName="variantType" [items]="foodTypes | keyvalue: originalOrder" bindValue="key" bindLabel="value" placeholder="Select"></ng-select>
+                                        <app-form-error-msg [control]="row.get('variantRow')['controls'][j]['controls']['variantType']">
+                                        </app-form-error-msg>
+                                    </div>
+                                    <div class="input-details col-4">
+                                        <label class="input-heading">Additional Price (&#8377;)</label>
+                                        <mat-form-field appearance="outline">
+                                            <input matInput formControlName="additionalPrice" type="text" placeholder="Enter price" appAllowTwoDecimalNumbers />
+                                        </mat-form-field>
+                                        <app-form-error-msg [control]="row.get('variantRow')['controls'][j]['controls']['additionalPrice']">
+                                        </app-form-error-msg>
+                                    </div>
+                                    <div class="input-details col-4">
+                                        <label class="input-heading mt-4">Is Default?</label>
+                                        <div class="radio-btn ms-2">
+                                            <input type="radio" [value]="true" formControlName="isDefault">
+                                            <span class="me-3">Yes</span>
+                                            <input type="radio" [value]="false" formControlName="isDefault">
+                                            <span class="me-3">No</span>
+                                        </div>
+                                        <app-form-error-msg [control]="row.get('variantRow')['controls'][j]['controls']['isDefault']">
+                                        </app-form-error-msg>
+                                    </div>
+                                    <div class="input-details col-3">
+                                        <label class="input-heading mt-4">In Stock?</label>
+                                        <div class="radio-btn ms-2">
+                                            <input type="radio" [value]="true" formControlName="inStock">
+                                            <span class="me-3">Yes</span>
+                                            <input type="radio" [value]="false" formControlName="inStock">
+                                            <span class="me-3">No</span>
+                                        </div>
+                                        <app-form-error-msg [control]="row.get('variantRow')['controls'][j]['controls']['inStock']">
+                                        </app-form-error-msg>
+                                    </div>
+                                    <div class="input-details col-4">
+                                        <label class="input-heading mt-4">Serves How Many?</label>
+                                        <mat-form-field appearance="outline">
+                                            <input matInput formControlName="servesHowMany" type="number" placeholder="Enter" />
+                                        </mat-form-field>
+                                        <app-form-error-msg [control]="row.get('variantRow')['controls'][j]['controls']['servesHowMany']">
+                                        </app-form-error-msg>
+                                    </div>
+                                    <div class="col-1 mt-3">
+                                        <mat-icon class="mt-5" mat-icon-button *ngIf="row?.controls?.variantRow?.length > 1 && !modalData.disableAll" (click)="deleteVariant(i,j)">delete</mat-icon>
+                                    </div>
+                                </div>
+                            </div>
+                            <a (click)="addVariant(i)" *ngIf="checkVariantGroupArrLength() && !modalData.disableAll"><b>Add More
+                                    Variants</b></a>
+                            <hr *ngIf="checkVariantGroupArrLength()">
+                        </div>
+                    </div>
+                    <div>
+                        <a (click)="addVariantGroup()" *ngIf="checkVariantGroupArrLength() && !modalData.disableAll"><b>Add More Variant
+                                Groups</b></a>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-details col-6">
+                            <label class="input-heading mt-4">Do you want to add add-ons?</label>
+                            <div class="radio-btn ms-2">
+                                <input type="radio" [value]="true" formControlName="addAddOnsChoice" (change)="onAddOnsSelection()">
+                                <span class="me-3">Yes</span>
+                                <input type="radio" [value]="false" formControlName="addAddOnsChoice" (change)="onAddOnsSelection()">
+                                <span class="me-3">No</span>
+                            </div>
+                            <app-form-error-msg [control]="itemActionForm.controls.addAddOnsChoice"></app-form-error-msg>
+                        </div>
+                    </div>
+                    <hr *ngIf="checkaddOnArrLength()">
+                    <div formArrayName="addOnRow" *ngIf="checkaddOnArrLength()">
+                        <div *ngFor="let row of itemActionForm['controls']['addOnRow']['controls']; let i=index" [formGroupName]="i">
+                            <div class="text-end">
+                                <a *ngIf="i > 0 && !modalData.disableAll" (click)="deleteAddOn(i)"><b>Delete this
+                                        Add-On</b></a>
+                            </div>
+                            <div class="row align-items-center">
+                                <div class="input-details col-6">
+                                    <label class="input-heading mt-4">Select Add-Ons Group</label>
+                                    <ng-select formControlName="addonGroupId" [items]="addonGroupList | uniqueAddonGroupFiler: selectedAddonGroups" bindValue="addonGroupId" bindLabel="addonGroupName" placeholder="Select Add-Ons" (change)="setAddons($event.addonGroupId,i)">
+                                    </ng-select>
+                                    <app-form-error-msg [control]="itemActionForm.get('addOnRow')['controls'][i]['controls']['addonGroupId']">
+                                    </app-form-error-msg>
+                                </div>
+                                <div class="input-details col-6 select-add-on">
+                                    <label class="input-heading mt-4">Select Add-Ons</label>
+                                    <ng-select formControlName="addonIds" [items]="addonList[i]" bindValue="addonId" bindLabel="addonName" [hideSelected]="true" placeholder="Select Add-Ons" [multiple]="true" [closeOnSelect]="false" [ngStyle]="{'min-height': '3.375em','max-height':'fit-content'}"></ng-select>
+                                    <app-form-error-msg [control]="itemActionForm.get('addOnRow')['controls'][i]['controls']['addonIds']">
+                                    </app-form-error-msg>
+                                </div>
+                                <div class="input-details col-6">
+                                    <label class="input-heading mt-4">Minimum Selection</label>
+                                    <mat-form-field appearance="outline">
+                                        <input matInput formControlName="minLimit" type="number" placeholder="Enter Value" />
+                                    </mat-form-field>
+                                    <app-form-error-msg [control]="itemActionForm.get('addOnRow')['controls'][i]['controls']['minLimit']">
+                                    </app-form-error-msg>
+                                </div>
+                                <div class="input-details col-6">
+                                    <label class="input-heading mt-4">Maximum Selection</label>
+                                    <mat-form-field appearance="outline">
+                                        <input matInput formControlName="maxLimit" type="number" placeholder="Enter Value" />
+                                    </mat-form-field>
+                                    <app-form-error-msg [control]="itemActionForm.get('addOnRow')['controls'][i]['controls']['maxLimit']">
+                                    </app-form-error-msg>
+                                </div>
+                            </div>
+                            <hr *ngIf="checkaddOnArrLength()">
+                        </div>
+                    </div>
+                    <div>
+                        <a (click)="addAddOns()" *ngIf="checkaddOnArrLength() && !modalData.disableAll"><b>Add More
+                                Add-Ons</b></a>
+                    </div>
+
+                    <div class="d-flex mt-4">
+                        <button class="buttons w-100 h-3 me-3" mat-button (click)="close()">DISMISS</button>
+                        <button class="buttons active-button w-100 h-3" mat-button (click)="submitItem()" *ngIf="!modalData.disableAll">{{isAddItem ? 'Add' : 'Save'}}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal hide drawer right-align" id="categorySequenceModalRight" role="dialog" aria-labelledby="sequenceModalLabel" aria-hidden="true" *ngIf="isVariantGroupSequenceModalVisible || isVariantSequenceModalVisible">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label class="modal-title border-0" id="exampleModalLabel">Change Sequence</label>
+                <mat-icon class="ms-3 cursor-enabled" (click)="closeSequenceModal()" data-dismiss="modal">close</mat-icon>
+            </div>
+            <div class="modal-body">
+                <div class="m-0 d-flex align-items-center flex-column w-100">
+                    <span class="d-flex w-100 align-items-baseline justify-content-between">
+                        <h6 class="note mb-5"><i>Drag and drop to determine the sequence</i></h6>
+                        <span>
+                            <button type="button" class="buttons active-button" (click)="saveVariantGroupSequence()"
+                                *ngIf="isVariantGroupSequenceModalVisible">Save</button>
+                            <button type="button" class="buttons active-button" (click)="saveVariantSequence()"
+                                *ngIf="isVariantSequenceModalVisible">Save</button>
+                        </span>
+
+                    </span>
+
+                    <div class="w-100" cdkDropList cdkDropListOrientation="vertical" (cdkDropListDropped)="dropVariantGroupSequence($event)" *ngIf="isVariantGroupSequenceModalVisible">
+                        <div class="sequence mt-3" cdkDrag *ngFor="let vairantGroup of itemDetails.variantGroupRow">
+                            <strong>{{vairantGroup.variantGroupName}}</strong>
+                        </div>
+                    </div>
+                    <div class="w-100" cdkDropList cdkDropListOrientation="vertical" (cdkDropListDropped)="dropVariantSequence($event)" *ngIf="isVariantSequenceModalVisible">
+                        <div class="sequence mt-3" cdkDrag *ngFor="let vairant of variantList">
+                            <strong>{{vairant.variantName}}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

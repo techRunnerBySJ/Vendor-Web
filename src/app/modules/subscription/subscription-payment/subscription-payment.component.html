@@ -1,0 +1,46 @@
+<div class="subscription-payment-wrapper">
+    <div class="d-flex justify-content-end" *ngIf="isPaymentBySubscriptionId">
+        <button class="buttons active-button mat-button" (click)="showAllPayments()">show All Payments</button>
+    </div>
+    <main class="subscription-payment-wrapper__content mt-4" *ngIf="subscriptionPaymentList.length; else noDataFound">
+        <table>
+            <thead>
+                <th>Payment ID</th>
+                <th>Plan</th>
+                <th>Subscription ID</th>
+                <th>Scheduled Date</th>
+                <th>Txn Date</th>
+                <th>Amount</th>
+                <th>Cycle</th>
+                <th>Status</th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let payment of subscriptionPaymentList 
+                | paginate: {itemsPerPage: pageSize, currentPage: currentPage, totalItems: totalSubscriptionPaymentRecords };">
+                    <td>{{payment.id}}</td>
+                    <td class="text-capitalize"><strong>{{payment.planName}}</strong></td>
+                    <td>{{payment.subscriptionId}}</td>
+                    <td>{{payment.scheduledDate}}</td>
+                    <td>{{payment.txnDate}}</td>
+                    <td>{{payment.amount ? payment.amount : 'N/A' }}</td>
+                    <td>
+                        <span>{{payment.currentCycle !== null ? payment.currentCycle : 'N/A'}}</span>
+                    </td>
+                    <td><span class="status" [ngClass]="{'status--green': subscriptionPaymentStatus.success === payment.status,
+                                'status--orange': subscriptionPaymentStatus.pending === payment.status,
+                                'status--red': subscriptionPaymentStatus.failed === payment.status}">{{payment.status}}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <pagination-controls (pageChange)="currentPage = $event;getSubscriptionPayments()">
+        </pagination-controls>
+    </main>
+</div>
+
+<ng-template #noDataFound>
+    <section class="d-flex flex-column justify-content-center align-items-center mt-5">
+        <img width="131" height="131" src="assets/icons/page404.svg">
+        <h3>Umm...no data found!</h3>
+    </section>
+</ng-template>

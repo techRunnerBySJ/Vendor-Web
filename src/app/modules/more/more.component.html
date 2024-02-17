@@ -1,0 +1,147 @@
+<div class="more-container w-100">
+
+    <!-- header and subscription button -->
+    <header>
+        <strong>More</strong>
+    </header>
+
+    <!-- main section containing all the features -->
+    <div class="main d-flex">
+        <div #carouselHolder>
+            <carousel class="carousel-container me-4" [width]="300" [cellsToShow]="1">
+                <div class="carousel-cell">
+                    <img [src]="outletDetails.outletPrimaryImage?.url" alt="" (click)="toggleImagesModal()">
+                </div>
+                <div class="carousel-cell" *ngFor="let outletImage of outletDetails.outletAdditionalImages; let i=index">
+                    <img [src]="outletImage.url" alt="" (click)="toggleImagesModal()">
+                </div>
+            </carousel>
+        </div>
+
+        <!-- contains details related to user -->
+        <div class="main__username d-flex justify-content-center mt-1">
+            <div class="other-user-details d-flex flex-column gap-3">
+                <h2 class="m-0"><b>{{outletDetails.name}}</b></h2>
+                <h6 class="m-0">Outlet ID: {{outletDetails.id}}</h6>
+                <h6 class="m-0">Branch Name: {{outletDetails.branchName? outletDetails.branchName : 'N/A'}}</h6>
+                <h6>Address: {{outletDetails.address}} </h6>
+                <h6 *ngIf="service === Services.Food">Outlet Type: {{outletDetails.type}} </h6>
+
+                <h6 *ngIf="outletDetails.discountRate > 0">Discount Rate: {{outletDetails.discountRate}}% Off</h6>
+
+                <h6 *ngIf="service !== Services.Grocery">Cost of Two: ₹{{outletDetails.costOfTwo}}  </h6>
+                <!-- <h6>Contact Number: {{outletDetails.contactNumber}}</h6> -->
+                <div class="other-user-details d-flex gap-2">
+                    <span class="justify-content-around flex-wrap text-uppercase align-text-center" *ngIf="service === Services.Food" matTooltip="Preparation-Time" matTooltipClass="custom-tooltip" matTooltipPosition="below">
+                        <img class="align-text-bottom me-2" src="assets/icons/time-icon.svg" width="16" height="16"
+                            alt="time icon">
+                        <label>{{outletDetails.defaultPrepTime}} mins</label>
+                    </span>
+                    <span class="justify-content-around flex-wrap text-uppercase align-items-center" *ngIf="outletDetails.rating">
+                        <img class="align-text-bottom me-2" src="assets/icons/thumbs-up-icon.svg" width="16" height="16"
+                            alt="thumbs-up icon">
+                        <label>{{outletDetails.rating | number:'1.1-1'}}</label>
+                    </span>
+                    <span class="edit-image d-flex flex-wrap text-uppercase" (click)="toggleImagesModal()" matTooltip="Edit Image" matTooltipClass="custom-tooltip" [matTooltipPosition]="'below'">
+                        <mat-icon>edit</mat-icon>
+                        <p class="ms-1 m-0">image</p>
+                    </span>
+                    <span class="col-6 d-flex align-items-center justify-content-evenly">
+                        <div matTooltip="Likes" matTooltipClass="custom-tooltip" matTooltipPosition="below">
+                            <img class="align-bottom" src="../../../../assets/icons/like-icon.svg" alt="" width="40"
+                                height="30">
+                                <label>{{outletDetails.likeCount}}</label>
+                        </div>
+                        <div matTooltip="Dislike" matTooltipClass="custom-tooltip" matTooltipPosition="below">
+                            <img src="../../../../assets/icons/dislike-icon.svg" alt="" width="40"
+                                height="30">
+                                <label class="align-middle">{{outletDetails.dislikeCount}}</label>
+                        </div>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="outlet-detail mt-5 d-flex flex-wrap gap-4">
+        <section class="prep-time d-flex flex-column justify-content-center align-items-center" (click)="openPrepTimeActionModal=true" matTooltip="View Preparation-Time" matTooltipClass="custom-tooltip" matTooltipPosition="above">
+            <img src="../../../assets/icons/time-icon.svg" alt="Preparation Time Icon" height="31" width="31">
+            <label for="" class="text-uppercase mt-3 cursor-enabled"><b>Prep Time</b></label>
+        </section>
+        <section class="outlet-info d-flex flex-column justify-content-center align-items-center" [routerLink]="'/more/outlet-info'" matTooltip="View Outlet-Information" matTooltipClass="custom-tooltip" matTooltipPosition="above">
+            <img src="../../../assets/icons/outlet-info-icon.svg" alt="Outlet Info Icon" height="31" width="31">
+            <label for="" class="text-uppercase cursor-enabled mt-3 "><b>Outlet Info</b></label>
+        </section>
+        <section class="slot-time d-flex flex-column justify-content-center align-items-center" [routerLink]="'/more/slot-time'" matTooltip="View Slot-Time" matTooltipClass="custom-tooltip" matTooltipPosition="above">
+            <img src="../../../assets/icons/slot-time-icon.png" alt="Slot Time Icon" height="39" width="39">
+            <label for="" class="text-uppercase cursor-enabled mt-2"><b>Slot Time</b></label>
+        </section>
+    </div>
+    <!-- <mat-tab-group mat-align-tabs="start" class="mt-5">
+        <mat-tab label="prep time" *ngIf="service === Services.Food">
+            <app-prep-time [prepTime]="outletDetails.defaultPrepTime"></app-prep-time>
+        </mat-tab>
+        <mat-tab label="outlet info">
+            <app-outlet-info></app-outlet-info>
+        </mat-tab>
+        <mat-tab label="slot time">
+            <app-slot-time></app-slot-time>
+        </mat-tab>
+    </mat-tab-group> -->
+</div>
+<div class="modal hide drawer right-align" id="helpModalRight" role="dialog" aria-labelledby="helpModalLabel" aria-hidden="true" *ngIf="openImageActionModal">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label class="modal-title border-0" id="exampleModalLabel">Outlet Images</label>
+                <div class=" d-flex align-items-center gap-4">
+                    <input [hidden]="true" (click)="$event.target.value = null" (change)="getFileUploadUrl($event.target.files, 'AddAdditional')" type="file" accept="image/*" #outletImage>
+                    <p class="add-icon d-flex align-items-center" (click)="outletImage.click()">
+                        <mat-icon>camera_enhance</mat-icon>
+                        <span>Add Image</span>
+                    </p>
+                    <mat-icon (click)="toggleImagesModal()" data-dismiss="modal">close</mat-icon>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="images-grid p-2">
+                    <div class="position-relative">
+                        <input [hidden]="true" (click)="$event.target.value = null" (change)="getFileUploadUrl($event.target.files, 'EditPrimary')" type="file" accept="image/*" #primaryImage>
+                        <span class="edit-primary-image-icon p-2">
+                            <mat-icon class="img-icons" matTooltip="Edit Primary Image" matTooltipClass="custom-tooltip"
+                                (click)="primaryImage.click()">edit</mat-icon>
+                        </span>
+                        <img [src]="outletDetails.outletPrimaryImage?.url" width="300" height="200" alt="">
+                    </div>
+                    <div class="position-relative mt-3" *ngFor="let outletImage of outletDetails.outletAdditionalImages; let i=index">
+                        <input [hidden]="true" (click)="$event.target.value = null" (change)="getFileUploadUrl($event.target.files, 'EditAdditional', i)" type="file" accept="image/*" #additionalImage>
+                        <span class="edit-primary-image-icon edit-additional-image-icon p-2">
+                            <mat-icon class="" matTooltip="Edit Image" matTooltipClass="custom-tooltip"
+                                (click)="additionalImage.click()">edit</mat-icon>
+                        </span>
+                        <span class="edit-primary-image-icon delete-additional-image-icon p-2">
+                            <mat-icon class="" matTooltip="Delete Image" matTooltipClass="custom-tooltip"
+                                (click)="deleteOutletImage(i);">close
+                            </mat-icon>
+                        </span>
+                        <img [src]="outletImage.url" width="300" height="200" alt="">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal hide drawer right-align" id="helpModalRight" role="dialog" aria-labelledby="helpModalLabel" aria-hidden="true" *ngIf="openPrepTimeActionModal">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label class="modal-title border-0" id="exampleModalLabel">Preparation Time</label>
+                <mat-icon (click)="openPrepTimeActionModal=false" data-dismiss="modal">close</mat-icon>
+            </div>
+            <div class="modal-body">
+                <app-prep-time [prepTime]="outletDetails.defaultPrepTime"></app-prep-time>
+            </div>
+        </div>
+    </div>
+</div>

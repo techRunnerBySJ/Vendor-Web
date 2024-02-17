@@ -1,0 +1,41 @@
+.dialog-wrapper {
+    margin: 0 auto;
+    padding: 2em;
+    width: 400px;
+
+    .radio-btn {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        grid-gap: 1em;
+        margin: 0 0 2em 0.7em;
+    }
+    .radio-btn input {
+        position: relative;
+        appearance: none;
+    }
+    .radio-btn input::before {
+        position: absolute;
+        content: "";
+        height: 1.25em;
+        width: 1.25em;
+        border: 2px solid #000;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        transition: 0.3s all ease;
+    }
+    .radio-btn input:checked::before {
+        display: none;
+    }
+    .radio-btn input:checked::after {
+        position: absolute;
+        content: url("../../../../assets/tick.svg");
+        color: #0d1d28;
+        cursor: pointer;
+        top: -0.8em;
+        left: -0.9em;
+    }
+}

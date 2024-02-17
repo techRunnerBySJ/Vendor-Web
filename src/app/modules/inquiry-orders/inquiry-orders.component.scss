@@ -1,0 +1,201 @@
+$primary-color: #0d1d28;
+
+.inquiry-orders-wrapper{
+    padding: 0 7.5rem;
+    position: relative;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    @media only screen and (min-device-width: 1025px) and (max-device-width: 1500px) {
+      padding: 0;
+    }
+
+    .inquiry-orders {
+        width: 40%;
+        @media only screen and (min-device-width: 1025px) and (max-device-width: 1500px) {
+            width: 45%;
+        }
+        
+        .header {
+          text-transform: capitalize;
+          font-size: 2em;
+          margin-bottom: 0.5em;
+        }
+    
+        .new-orders {
+          background-color: #fff;
+          border-radius: 12px;
+          padding: 1.25em;
+    
+          .total-new-orders {
+            animation: pulse 0.90s infinite;
+            font-size: 18px;
+            font-weight: 600;
+            color: $primary-color;
+            background-color: #fcd400;
+            padding: 1.25em;
+            border-radius: 12px;
+            text-transform: capitalize;
+    
+            img {
+              cursor: pointer;
+            }
+          }
+        }
+      }
+    
+      .ongoing-orders {
+        width: 40%;
+        @media only screen and (min-device-width: 1025px) and (max-device-width: 1500px) {
+          width: 45%;
+        }
+      }
+}
+
+//common css of order card [for new orders, preparing, in transit]
+.order-card {
+    margin-top: 1.25em;
+    padding: 1.25em 1.25em 0.7em;
+    border-radius: 12px;
+    border: 1px solid #e7ecef;
+    cursor: pointer;
+    li:nth-child(2) {
+        padding-top: 1em;
+    }
+    .outlet-name {
+        color: #04a971;
+    }
+    .pending-your {
+        color: #04a971;
+        background-color: rgba(4, 169, 113, 0.1);
+        font-size: 12px;
+        width: fit-content;
+        padding: 2px 10px;
+        border-radius: 4px;
+        justify-self: flex-end;
+    }
+
+    .pending-custmer {
+        color: #ea7407;
+        background-color: rgba(234, 116, 7, 0.1);
+        font-size: 12px;
+        width: fit-content;
+        padding: 2px 10px;
+        border-radius: 4px;
+        justify-self: flex-end;
+    }
+    .progressbar {
+        background-color: #e7ecef;
+        border-radius: 13px;
+        width: 58%;
+        height: 0.37em;
+        display: inline-block;
+        div {
+            background-color: #04a971;
+            width: 0%;
+            height: 100%;
+            border-radius: 10px;
+        }
+        .progressbar--orange {
+            background-color: #ea7407;
+        }
+        .progressbar--red {
+            background-color: #ff0039;
+        }
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: 2.5fr 1fr;
+        mat-icon,
+        button {
+            justify-self: flex-end;
+            align-self: flex-end;
+            grid-column: 2;
+        }
+    }
+    .order-det {
+        max-width: 200px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    .cart {
+        color: #6d7e8b;
+    }
+    .timer--green {
+        color: #04a971;
+    }
+    .timer--orange {
+        color: #ea7407;
+    }
+    .timer--red {
+        color: #ff0039;
+    }
+    .pull-right {
+        text-align: right;
+    }
+}
+
+//common css for order card [preparing, in transit]
+.ongoing {
+    margin-top: 0;
+    margin-bottom: 1.25em;
+    background-color: #fff;
+    border: none;
+    padding: 1.25em;
+    .ready-btn {
+        padding: 0.5em 1em;
+        font-size: 14px;
+        font-weight: 600;
+        background-color: #fdf2cc;
+        color: $primary-color;
+        text-transform: uppercase;
+        border-radius: 6px;
+        letter-spacing: 1px;
+        border: none;
+    }
+    .white-btn {
+        border: 1px solid #d2d9de;
+        background-color: transparent;
+    }
+    .rider-details {
+        margin-top: 0.7em;
+        color: #6d7e8b;
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        mat-icon {
+            justify-self: flex-end;
+            grid-column: 2;
+        }
+    }
+}
+
+.offline {
+    grid-gap: 1em;
+    height: 75%;
+    color: $primary-color;
+}
+
+@keyframes pulse {
+    from {
+        transform: scale(0.8);
+    }
+    to {
+        transform: scale(1.2);
+    }
+}
+
+.active {
+    // animation: pulse 0.90s infinite;
+    font-size: 18px;
+    font-weight: 600;
+    color: $primary-color;
+    background-color: #fcd400;
+    padding: 1.25em;
+    border-radius: 12px;
+    text-transform: capitalize;
+    img {
+        cursor: pointer;
+    }
+}

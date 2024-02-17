@@ -1,0 +1,24 @@
+<section class="dialog-wrapper">
+    <div class="text-center">
+        <div *ngIf="showEditQuantityDialog">
+            <h4><b>Set Maximum Availability</b></h4>
+            
+            <div class="d-flex justify-content-between align-items-center">
+                <img src="assets/icons/substract-icon.svg" alt="substract icon" (click)="editMaximumItem('decrease')"  [ngClass]="{'grey-out': maximumItemQuantity === 1}" class="cursor-enabled">
+                <label class="time d-flex flex-column">
+                    <span><b>{{maximumItemQuantity}}</b></span>
+                    <span>Items</span>
+                </label>
+                <img src="assets/icons/addition-icon.svg" alt="addition icon" (click)="editMaximumItem('increase')" [ngClass]="{'grey-out': maximumItemQuantity === maxQuantityOfItem}" class="cursor-enabled">
+            </div>
+        </div>
+        <div *ngIf="showOutOfStockDialog">
+            <h4><b>Are you sure you want to mark this item as Out of Stock?</b></h4>
+        </div>
+        
+        <div class="d-flex">
+                <button mat-button class="buttons me-3 mt-4 w-100 h-3" (click)="onDismiss()">cancel</button>
+                <button mat-icon class="buttons active-button mt-4 h-3 w-100" (click)="onConfirm()">confirm</button>
+        </div>
+    </div>
+</section>

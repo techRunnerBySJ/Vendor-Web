@@ -1,0 +1,14 @@
+.container{
+    position: relative;
+    height: 31vh;
+    width: 74vw;
+    img{
+        position:absolute;
+        height: 131px;
+        width: 131px;
+    }
+    .content{
+        position: relative;
+        top: 10rem;
+    }
+}

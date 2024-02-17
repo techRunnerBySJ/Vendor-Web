@@ -1,0 +1,303 @@
+$font-size: 14px;
+$primary-color: #0d1d28;
+$text-transform: capitalize;
+$border: 1px solid #e7ecef;
+$cursor: pointer;
+$secondary-color: #6d7e8b;
+
+@mixin padding-border-radius {
+    padding: 1.25em;
+    border-radius: 12px;
+}
+
+.payouts-wrapper {
+    padding: 0 7.5rem;
+
+    @media only screen and (min-device-width: 1025px) and (max-device-width: 1500px) {
+        padding: 0 1.5rem;
+    }
+
+    .warning-msg {
+        color: #9F6000;
+        background-color: #FEEFB3;
+        display: flex;
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 3px 3px 3px 3px;
+    }
+
+    .clickable {
+        cursor: $cursor;
+    }
+
+    .payouts-grid {
+        margin-bottom: 2em;
+
+        .payout-heading {
+            font-size: 16px;
+            color: $primary-color;
+            text-transform: $text-transform;
+        }
+
+        .payout-amount {
+            font-size: 2em;
+            grid-gap: 1em;
+        }
+
+        .payout-amount--green {
+            color: #04a971;
+        }
+
+        .payout-amount--orange {
+            color: #ea7407;
+        }
+
+        .payout-link {
+            color: $primary-color;
+            margin: 0;
+        }
+
+        .available-payout {
+            @include padding-border-radius;
+            width: 30%;
+            background-color: #fcd400;
+        }
+
+        .last-payout {
+            @include padding-border-radius;
+            width: 30%;
+            background-color: rgba(207, 238, 228, 0.5);
+
+            .payout-status--paid {
+                color: #04a971;
+                background-color: rgba(4, 169, 113, 0.1);
+                font-size: $font-size;
+                letter-spacing: 1px;
+                line-height: 1em;
+                padding: 4px;
+                border-radius: 4px;
+            }
+        }
+
+        .upcoming-payout {
+            @include padding-border-radius;
+            width: 30%;
+            background-color: rgba(251, 228, 208, 0.5);
+
+            .payout-status--pending {
+                color: #ea7407;
+                background-color: rgba(234, 116, 7, 0.1);
+                font-size: $font-size;
+                letter-spacing: 1px;
+                line-height: 1em;
+                padding: 4px;
+                border-radius: 4px;
+            }
+        }
+    }
+
+    .past-payouts-section {
+        background-color: #fff;
+        @include padding-border-radius;
+
+        h5 {
+            color: $primary-color;
+            text-transform: $text-transform;
+            border-bottom: $border;
+            padding-bottom: 1.25em;
+        }
+
+        .past-payouts-list {
+            width: 40%;
+
+            .past-payout-card {
+                margin-top: 1.25em;
+                padding: 1.25em 1.25em 0.7em;
+                border-radius: 12px;
+                border: $border;
+
+                ul {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+                    color: $primary-color;
+
+                    li {
+                        margin-bottom: 1em;
+                    }
+
+                    .txn-amount {
+                        font-size: 1.25em;
+                    }
+
+                    .txn-date {
+                        color: $secondary-color;
+                    }
+                }
+
+                .pull-right {
+                    text-align: right;
+                }
+            }
+
+            .past-payout-card--active {
+                background-color: #fdf2cc;
+                border: none;
+            }
+        }
+
+        .past-payout-details {
+            margin-top: 1.25em;
+
+            .header {
+                padding-bottom: 1.5em;
+                color: $primary-color;
+                border-bottom: $border;
+                font-weight: 600;
+
+                .total-orders {
+                    width: 10em;
+                    text-transform: $text-transform;
+
+                    span {
+                        background-color: #f2f5f8;
+                        border: 1px solid #8d9da8;
+                        font-size: 12px;
+                        border-radius: 4px;
+                        padding: 0 4px;
+                        font-weight: 500;
+                    }
+                }
+
+                .total-amount {
+                    font-size: 1.25em;
+                }
+            }
+
+            table {
+                text-transform: $text-transform;
+
+                th {
+                    color: $primary-color;
+                    font-weight: 600;
+                    padding-top: 1.25em;
+                }
+
+                td {
+                    color: $secondary-color;
+                    font-size: $font-size;
+                    line-height: 2em;
+                }
+
+                .colspan-2 {
+                    width: 80%;
+                }
+
+                .pull-right {
+                    text-align: right;
+                }
+            }
+        }
+    }
+
+    .payout-settings {
+        background-color: #fff;
+        @include padding-border-radius;
+        width: 40%;
+        margin-bottom: 1.25em;
+
+        @media only screen and (min-device-width: 1025px) and (max-device-width: 1500px) {
+            width: 50%;
+        }
+
+        .header {
+            color: $primary-color;
+            text-transform: $text-transform;
+
+            &__link {
+                color: $secondary-color;
+                font-size: $font-size;
+                cursor: $cursor;
+            }
+        }
+
+        .bank-accout-card {
+            margin-top: 1.25em;
+            @include padding-border-radius;
+            border: $border;
+            display: grid;
+            grid-gap: 1em;
+            grid-template-columns: 1fr 2.5fr 2fr 0.5fr;
+
+            .bank-account-details {
+                color: $primary-color;
+                font-size: $font-size;
+
+                p {
+                    margin: 0;
+                }
+            }
+
+            mat-icon {
+                grid-column: 4;
+            }
+
+            .primary-account {
+                color: #04a971;
+                background-color: rgba(4, 169, 113, 0.1);
+                font-size: 12px;
+                width: fit-content;
+                padding: 2px 10px;
+                border-radius: 4px;
+                justify-self: flex-end;
+            }
+
+            .payout-status--pending {
+                color: #ea7407;
+                background-color: rgba(234, 116, 7, 0.1);
+                font-size: 12px;
+                width: fit-content;
+                padding: 2px 10px;
+                border-radius: 4px;
+                justify-self: flex-end;
+            }
+        }
+    }
+}
+
+.checkbox {
+    margin-left: 1em;
+    grid-gap: 1.5em;
+}
+
+.checkbox input {
+    position: relative;
+    appearance: none;
+}
+
+.checkbox input::before {
+    position: absolute;
+    content: "";
+    height: 1.25em;
+    width: 1.25em;
+    border: 2px solid #000;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: $cursor;
+    transition: 0.3s all ease;
+}
+
+.checkbox input:checked::before {
+    display: none;
+}
+
+.checkbox input:checked::after {
+    position: absolute;
+    content: url('../../../../assets/tick.svg');
+    color: $primary-color;
+    cursor: $cursor;
+    top: -0.8em;
+    left: -0.8em;
+}

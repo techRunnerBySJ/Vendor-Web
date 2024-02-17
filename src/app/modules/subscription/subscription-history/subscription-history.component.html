@@ -1,0 +1,47 @@
+<div class="subscription-history-wrapper">
+    <main class="subscription-history-wrapper__content mt-4" *ngIf="subscriptionHistoryList.length; else noDataFound">
+        <table>
+            <thead>
+                <th>Plan</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Consumed Orders</th>
+                <th>Orders Bought</th>
+                <th>Next Payment On</th>
+                <th>Status</th>
+            </thead>
+            <tbody>
+                <tr
+                    *ngFor="let subscription of subscriptionHistoryList 
+                    | paginate: {itemsPerPage: pageSize, currentPage: currentPage, totalItems: totalSubscriptionRecords };">
+                    <td class="text-capitalize"><strong>{{subscription.planName}}</strong></td>
+                    <td>{{subscription.startDate}}</td>
+                    <td>{{subscription.endDate}}</td>
+                    <td>{{subscription.ordersConsumed ? subscription.ordersConsumed :'N/A' }}</td>
+                    <td>{{subscription.ordersBought ? subscription.ordersBought : 'N/A'}}</td>
+                    <td>{{subscription.nextPaymentDate}}</td>
+                    <td>
+                        <span class="status"
+                            [ngClass]="{'status--green': greenStatusArr.includes(subscription.status),
+                                'status--orange': orangeStatusArr.includes(subscription.status),
+                                'status--red': redStatusArr.includes(subscription.status)}">{{subscription.status}}</span>
+                    </td>
+                    <td>
+                        <img class="cursor-enabled" matTooltip="Payment Details" matTooltipClass="custom-tooltip"
+                            (click)="navigateToSubscriptionPayment(subscription.id)" width="30" height="30"
+                            src="../../../../assets/icons/payment-details-icon.svg" alt="">
+                        <!-- <mat-icon class="cursor-enabled" matTooltip="Payment Details" matTooltipClass="custom-tooltip" (click)="navigateToSubscriptionPayment(subscription.id)">more_horiz</mat-icon> -->
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <pagination-controls (pageChange)="currentPage = $event;getSubscriptionHistory()"></pagination-controls>
+    </main>
+</div>
+
+<ng-template #noDataFound>
+    <section class="d-flex flex-column justify-content-center align-items-center mt-5">
+        <img width="131" height="131" src="assets/icons/page404.svg">
+        <h3>Umm...no data found!</h3>
+    </section>
+</ng-template>

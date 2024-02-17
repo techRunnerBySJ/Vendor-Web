@@ -1,0 +1,71 @@
+<div class="d-flex align-items-baseline">
+    <mat-icon class="fs-5 fw-bold ms-3 cursor-enabled" [routerLink]="'/more'" matTooltip="Go to more page">keyboard_arrow_left</mat-icon>
+    <label class="fs-3 fw-bold">Slot Time</label>
+</div>
+
+<div class="slot-time-container mt-3">
+    <!-- main section containing all the features -->
+    <div class="slot-time-detail w-50 ms-5">
+        <form [formGroup]="slotsForm">
+            <div class="slot-type d-flex justify-content-between align-items-center">
+                <ng-select class="w-50" [items]="timeSlotTypesList | keyvalue: originalOrder" bindValue="key" bindLabel="value" placeholder="Select Type" formControlName="slotType" (change)="slotTypeSelectionChange($event.key)">
+                </ng-select>
+                <a class="text-decoration-none text-dark cursor-enabled" (click)="editForm()" *ngIf="slotsForm.disabled" matTooltip="Edit slot-time" matTooltipClass="custom-tooltip" matTooltipPosition="above"><strong><img src="assets/icons/edit-icon.svg" alt=""> Edit</strong></a>
+            </div>
+            <section formGroupName="slotDays">
+                <ng-container *ngFor="let day of days | keyvalue: originalOrder">
+                    <div formArrayName="{{day.key}}" *ngIf="checkSlotControlExistInArray(day.key) || !slotsForm.disabled">
+                        <p *ngIf="showDayTypeHeading" class="heading">{{day.value}}</p>
+                        <div *ngFor="let row of getFormArray(day.key)['controls']  ; let i=index" [formGroupName]="i">
+                            <p class="heading heading--grey d-flex align-items-center">slot {{i+1}}
+                                <mat-icon (click)="deleteSlot(day.key,i)" matTooltip="Delete" *ngIf="!slotsForm.disabled && getFormArray(day.key)['controls'].length > 1">
+                                    delete
+                                </mat-icon>
+                            </p>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label class="input-heading">OPENING HOURS</label>
+                                    <div class="input-field">
+                                        <mat-form-field appearance="outline">
+                                            <input matInput type="time" class="input-form-control" name="openingHours" formControlName="openingHours" placeholder="Enter opening hours">
+                                            <!-- <ngx-material-timepicker-toggle matSuffix [for]="openingHours">
+                                            </ngx-material-timepicker-toggle>
+                                            <ngx-material-timepicker #openingHours></ngx-material-timepicker> -->
+                                        </mat-form-field>
+                                        <app-form-error-msg [control]="getFormArray(day.key)['controls'][i]['controls']['openingHours']">
+                                        </app-form-error-msg>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="input-heading">CLOSING HOURS</label>
+                                    <div class="input-field">
+                                        <mat-form-field appearance="outline">
+                                            <input matInput type="time" class="input-form-control" name="closingHours" formControlName="closingHours" placeholder="Enter closing hours">
+                                            <!-- <ngx-material-timepicker-toggle matSuffix [for]="closingHours">
+                                            </ngx-material-timepicker-toggle>
+                                            <ngx-material-timepicker #closingHours></ngx-material-timepicker> -->
+                                        </mat-form-field>
+                                        <app-form-error-msg [control]="getFormArray(day.key)['controls'][i]['controls']['closingHours']">
+                                        </app-form-error-msg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" *ngIf="!slotsForm.disabled && getFormArray(day.key)['controls'].length < 3" (click)="addSlot(day.key)" class="buttons active-button mt-3" mat-raised-button>
+                        Add More Slot
+                    </button>
+                </ng-container>
+            </section>
+            <div class="edit-buttons d-flex justify-content-end gap-3" *ngIf="!slotsForm.disabled">
+                <button type="button" class="buttons w-25" (click)="clearSlotChanges()" mat-button>
+                        Cancel
+                </button>
+                <button type="button" class="buttons active-button w-25" (click)="saveSlotChanges()" mat-button>
+                    Save
+            </button>
+            </div>
+        </form>
+    </div>
+
+</div>

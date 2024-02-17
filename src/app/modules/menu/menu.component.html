@@ -1,0 +1,430 @@
+<div class="menu-container">
+    <div class="restaurant-menu">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="d-flex align-items-center">
+                <img class="align-baseline me-2 clickable" src="assets/icons/back-icon.svg" width="16" height="16"
+                    (click)="navigateToItemPage()" *ngIf="showAddons">
+                <b>{{showAddons ? 'Add-Ons' : 'Outlet Menu'}}</b>
+            </h2>
+            <div class="d-flex justify-content-between gap-2">
+                <button class="buttons active-button" (click)="openAddNewDialog(false)" mat-button *ngIf="service !== Services.Grocery && service !== Services.Pharmacy && service !== Services.Pet"> {{showAddons ? 'ADD
+                    ADD-ON GROUP' : 'ADD CATEGORY'}}</button>
+                <button class="buttons active-button" (click)="navigateToAddOnsPage()" mat-button *ngIf="!showAddons">GO
+                    TO ADD-ONS</button>
+                <button *ngIf="!showAddons && categoryList?.length > 1" class="buttons buttons--yellow"
+                    (click)="openCategorySequenceModal()" mat-button matTooltip="Change Sequence"
+                    matTooltipClass="custom-tooltip"><img src="../../../assets/icons/sequence-icon.svg" alt="">
+                    Category</button>
+            </div>
+        </div>
+        <div class="row align-items-center"
+            *ngIf="(!showAddons && menuList.length) || (showAddons && addonGroupList.length)">
+            <div class="col-6">
+                <div class="input-group align-items-end">
+                    <div class="input-group-prepend">
+                        <img class="align-top" src="assets/icons/search-icon.svg" alt="search icon">
+                    </div>
+                    <input type="text" placeholder="Search" aria-describedby="button-addon2"
+                        class="form-control border-0 bg-light" [ngModel]="term"
+                        (ngModelChange)="onSearchTermChange($event)">
+                    <div class="input-group-append" *ngIf="term">
+                        <button mat-icon-button type="button" (click)="clearSearch()">
+                            <mat-icon>clear</mat-icon>
+                        </button>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-6 align-items-center">
+                <div class="radio-btn ms-3">
+                    <ng-container *ngFor="let type of foodTypes | keyvalue: originalOrder">
+                        <input type="checkbox" [value]="type.key" name="foodType"
+                            [checked]="selectedFoodTypes.includes(type.key)"
+                            (change)="onFoodTypeSelectionChange($event)"
+                            (click)="preventUncheckingAllFoodTypeCheckboxes($event)">
+                        <span class="me-3">{{type.value}}</span>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+
+        <!-- restaurant menu list -->
+        <div *ngIf="!showAddons">
+
+            <!-- category -->
+            <mat-expansion-panel class="special-items mb-3"
+                *ngFor="let category of menuList | filter: term | categoryFilter: selectedFoodTypesInString"
+                [expanded]="isCategoryPanelOpened(category.categoryId)"
+                (opened)="setOpenedCategorypanel(category.categoryId, true)"
+                (closed)="setOpenedCategorypanel(category.categoryId, false)">
+                <mat-expansion-panel-header>
+                    <div class="title-action">
+                        <section class="title">
+                            <label class="me-2" *ngIf="category.masterCategoryName">[{{category.masterCategoryName}}]</label>
+                            <label>{{category.categoryName}}</label><label class="ms-2"
+                                *ngIf="category.discountRate > 0">({{category.discountRate}}% off)</label>
+                            <input class="me-3 ms-3" type="checkbox" [ngClass]="{'on': category.categoryInStock}"
+                                role="switch" name="toggle" (click)="createCategoryHolidaySlot(category)">
+
+                        </section>
+                        <section class="action" (click)="$event.stopPropagation();">
+                            <ng-container *ngIf="service !== Services.Grocery && service !== Services.Pharmacy && service !== Services.Pet">
+                                <img class="me-3" height="15" width="15" src="assets/icons/add-icon.svg" alt="add-icon"
+                                    matTooltip="Add New Sub Category" matTooltipClass="custom-tooltip"
+                                    (click)="toggleAddNewSubCategoryModal('ADD',category)">
+                                <img class="me-3" height="18" width="18" src="assets/icons/edit-icon.svg"
+                                    alt="edit-icon" matTooltip="Edit Category" matTooltipClass="custom-tooltip"
+                                    (click)="openAddNewDialog(true, category.categoryId, category.categoryName)">
+                                <img height="18" width="18" src="assets/icons/delete.svg" alt="delete-icon"
+                                    matTooltip="Remove Category" matTooltipClass="custom-tooltip"
+                                    (click)="removeAction('category', category.categoryId, category.categoryName)">
+                            </ng-container>
+                            <img class="ms-3" height="15" width="15" src="assets/icons/sequence-icon.svg"
+                                *ngIf="category.subCategories.length > 1" alt="sequence icon"
+                                matTooltip="Change Sub Category Sequence" matTooltipClass="custom-tooltip"
+                                (click)="openSubCategorySequenceModal(category.categoryId)">
+                        </section>
+                    </div>
+                </mat-expansion-panel-header>
+                <!-- sub category -->
+                <mat-expansion-panel class="special-items mb-3"
+                    *ngFor="let subCategory of category.subCategories | subCategoryFilter: selectedFoodTypesInString; let j=index"
+                    [expanded]="isSubCategoryPanelOpened(subCategory.subCategoryId)"
+                    (opened)="setopenedSubCategoryPanel(subCategory.subCategoryId, true)"
+                    (closed)="setopenedSubCategoryPanel(subCategory.subCategoryId, false)">
+                    <mat-expansion-panel-header>
+                        <div class="title-action">
+                            <section class="title">
+                                <label>{{subCategory.subCategoryName}}</label><label class="ms-2"
+                                    *ngIf="subCategory.discountRate > 0">({{subCategory.discountRate}}% off)</label>
+                                <input class="me-3 ms-3" type="checkbox"
+                                    [ngClass]="{'on': subCategory.subCategoryInStock}" role="switch" name="toggle"
+                                    (click)="createSubCategoryHolidaySlot(subCategory, category)">
+                            </section>
+                            <section class="action" (click)="$event.stopPropagation();">
+                                <ng-container *ngIf="service !== Services.Grocery && service !== Services.Pharmacy && service !== Services.Pet">
+                                    <img class="me-3" height="15" width="15" src="assets/icons/add-icon.svg"
+                                        alt="add-icon" matTooltip="Add New Item" matTooltipClass="custom-tooltip"
+                                        (click)="toggleAddNewItemModal('ADD',category.categoryId,subCategory.subCategoryId)">
+                                    <img class="me-3" height="18" width="18" src="assets/icons/edit-icon.svg"
+                                        alt="edit-icon" matTooltip="Edit Sub Category" matTooltipClass="custom-tooltip"
+                                        (click)="toggleAddNewSubCategoryModal('EDIT', category, j)">
+                                    <img height="18" width="18" src="assets/icons/delete.svg" alt="delete-icon"
+                                        matTooltip="Remove Sub Category" matTooltipClass="custom-tooltip"
+                                        (click)="removeAction('sub-category', subCategory.subCategoryId, subCategory.subCategoryName)">
+                                </ng-container>
+                                <img class="ms-3" height="15" width="15" src="assets/icons/sequence-icon.svg"
+                                    *ngIf="subCategory.menuItems.length > 1" alt="sequence icon"
+                                    matTooltip="Change Items Sequence" matTooltipClass="custom-tooltip"
+                                    (click)="openItemsSequenceModal(subCategory.subCategoryId)">
+                            </section>
+                        </div>
+                    </mat-expansion-panel-header>
+                    <!-- items -->
+                    <div class="item-action">
+                        <table class="item-table w-100" mat-table
+                            [dataSource]="subCategory.menuItems | foodTypeFilter: selectedFoodTypesInString" matSort>
+
+                            <ng-container matColumnDef="image">
+                                <th mat-header-cell *matHeaderCellDef>Image </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <img class="item-dp" height="50" width="50" src='{{row.itemImageUrl}}'
+                                        (error)="onMenuImgError($event)" alt="item-image">
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="itemName">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Item Name </th>
+                                <td mat-cell class="clickable" *matCellDef="let row"
+                                    (click)="toggleAddNewItemModal('VIEW', category.categoryId,subCategory.subCategoryId,row.itemId)">
+                                    <u matTooltip="View Item" matTooltipClass="custom-tooltip">{{row.itemName}}</u>
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="itemPrice">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Item Price </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <span *ngIf="row.displayPrice"><s>&#8377;{{row.displayPrice}}</s>&nbsp;
+                                        &#8377;{{row.itemPrice}}</span>
+                                    <span *ngIf="!row.displayPrice">&#8377;{{row.itemPrice}}</span>
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="discountRate">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Discount Rate(%) </th>
+                                <td mat-cell *matCellDef="let row">{{row.discountRate}} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="foodType">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Item Type </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <img class="ms-4" height="20" width="20"
+                                        src='{{"assets/icons/" + row.foodType + "-icon.svg"}}' alt="item-type">
+                                </td>
+                            </ng-container>
+
+                            <ng-conatiner matColumnDef="status">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Status </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <input class="me-3" type="checkbox" [ngClass]="{'on': row.itemInStock}"
+                                        role="switch" name="toggle"
+                                        (click)="createItemHolidaySlot(row, subCategory, category)">
+                                </td>
+                            </ng-conatiner>
+
+                            <ng-container matColumnDef="actions">
+                                <th mat-header-cell *matHeaderCellDef>Action </th>
+                                <td mat-cell *matCellDef="let row">
+                                    <mat-icon class="clickable" mat-icon-button [matMenuTriggerFor]="menu">more_vert
+                                    </mat-icon>
+                                    <mat-menu #menu="matMenu">
+                                        <table>
+                                            <tr class="clickable"
+                                                (click)="toggleAddNewItemModal('VIEW', category.categoryId,subCategory.subCategoryId,row.itemId)">
+                                                <td><b>View Item &nbsp;</b></td>
+                                                <td><img height="18" width="18" src="assets/icons/view-icon.svg"
+                                                        alt="view-icon"></td>
+                                            </tr>
+                                            <tr class="clickable"
+                                                (click)="toggleAddNewItemModal('EDIT', category.categoryId,subCategory.subCategoryId,row.itemId)"
+                                                *ngIf="service !== Services.Grocery && service !== Services.Pharmacy && service !== Services.Pet">
+                                                <td><b>Edit Item &nbsp;</b></td>
+                                                <td><img height="18" width="18" src="assets/icons/edit-icon.svg"
+                                                        alt="edit-icon"></td>
+                                            </tr>
+                                            <tr class="clickable"
+                                                (click)="removeAction('item', row.itemId, row.itemName)"
+                                                *ngIf="service !== Services.Grocery && service !== Services.Pharmacy && service !== Services.Pet">
+                                                <td><b>Remove Item &nbsp;</b></td>
+                                                <td><img height="18" width="18" src="assets/icons/delete.svg"
+                                                        alt="delete-icon"></td>
+                                            </tr>
+                                        </table>
+                                    </mat-menu>
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                            <tr class="mat-row" *matNoDataRow>
+                                <td class="mat-cell" [attr.colspan]="displayedColumns.length">There is no item available
+                                    !!!
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </mat-expansion-panel>
+            </mat-expansion-panel>
+        </div>
+
+        <div *ngIf="showAddons">
+            <mat-expansion-panel class="special-items mb-3"
+                *ngFor="let addonGroup of addonGroupList | filter: term | addonGroupFilter: selectedFoodTypesInString; let i=index"
+                [expanded]="isAddonsPanelOpened(addonGroup.addonGroupId)"
+                (opened)="setAddons(addonGroup.addonGroupId);setopenedAddonsPanel(addonGroup.addonGroupId, true)"
+                (closed)="setopenedAddonsPanel(addonGroup.addonGroupId, false)">
+                <mat-expansion-panel-header>
+                    <div class="title-action">
+                        <section class="title">
+                            <label>{{addonGroup.addonGroupName}}</label>
+                            <input class="me-3 ms-3" type="checkbox" [ngClass]="{'on': addonGroup.addonGroupInStock}"
+                                role="switch" name="toggle" (click)="createAddonGroupHolidaySlot(addonGroup)">
+                        </section>
+                        <section class="action" (click)="$event.stopPropagation();"
+                            *ngIf="service !== Services.Grocery && service !== Services.Pharmacy && service !== Services.Pet">
+                            <img class="me-3" height="15" width="15" src="assets/icons/add-icon.svg" alt="add-icon"
+                                matTooltip="Add New Add on" matTooltipClass="custom-tooltip"
+                                (click)="toggleAddNewAddOnModal('ADD', addonGroup.addonGroupId)">
+                            <img class="me-3" height="18" width="18" src="assets/icons/edit-icon.svg" alt="edit-icon"
+                                matTooltip="Edit Add On Group" matTooltipClass="custom-tooltip"
+                                (click)="openAddNewDialog(true, addonGroup.addonGroupId, addonGroup.addonGroupName)">
+                            <img height="18" width="18" src="assets/icons/delete.svg" alt="delete-icon"
+                                matTooltip="Remove Add On Group" matTooltipClass="custom-tooltip"
+                                (click)="removeAction('addon-group', addonGroup.addonGroupId, addonGroup.addonGroupName)">
+                        </section>
+                    </div>
+                </mat-expansion-panel-header>
+                <!-- addons -->
+                <div class="item-action">
+                    <table class="item-table w-100" mat-table
+                        [dataSource]="addonGroup.addons | foodTypeFilter: selectedFoodTypesInString" matSort
+                        *ngIf="addonGroup.addons.length >0">
+                        <ng-container matColumnDef="addonName">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Add-on Name </th>
+                            <td mat-cell *matCellDef="let row" class="clickable"
+                                (click)="toggleAddNewAddOnModal('VIEW', addonGroup.addonGroupId, row)">
+                                <u>{{row.addonName}} </u></td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="addonPrice">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Add-on Price </th>
+                            <td mat-cell *matCellDef="let row">&#8377; {{row.addonPrice}}.00 </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="foodType">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Add-on Type </th>
+                            <td mat-cell *matCellDef="let row">
+                                <img height="20" width="20" src='{{"assets/icons/" + row.foodType + "-icon.svg"}}'
+                                    alt="item-type">
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="status">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Status </th>
+                            <td mat-cell *matCellDef="let row"> <input class="me-3" type="checkbox"
+                                    [ngClass]="{'on': row.addonInStock}" role="switch" name="toggle"
+                                    (click)="createAddonHolidaySlot(row, addonGroup)"> </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="actions">
+                            <th mat-header-cell *matHeaderCellDef>Action </th>
+                            <td mat-cell *matCellDef="let row">
+                                <mat-icon class="clickable" mat-icon-button [matMenuTriggerFor]="menu">more_vert
+                                </mat-icon>
+                                <mat-menu #menu="matMenu">
+                                    <table>
+                                        <tr class="clickable"
+                                            (click)="toggleAddNewAddOnModal('VIEW', addonGroup.addonGroupId, row)">
+                                            <td><b>View Add-On &nbsp;</b></td>
+                                            <td><img height="18" width="18" src="assets/icons/view-icon.svg"
+                                                    alt="view-icon"></td>
+                                        </tr>
+                                        <tr class="clickable"
+                                            (click)="toggleAddNewAddOnModal('EDIT', addonGroup.addonGroupId, row)"
+                                            *ngIf="service !== Services.Grocery && service !== Services.Pharmacy && service !== Services.Pet">
+                                            <td><b>Edit Add-On &nbsp;</b></td>
+                                            <td><img height="18" width="18" src="assets/icons/edit-icon.svg"
+                                                    alt="edit-icon"></td>
+                                        </tr>
+                                        <tr class="clickable"
+                                            (click)="removeAction('addon', row.addonId, row.addonName)"
+                                            *ngIf="service !== Services.Grocery && service !== Services.Pharmacy && service !== Services.Pet">
+                                            <td><b>Remove Add-On &nbsp;</b></td>
+                                            <td><img height="18" width="18" src="assets/icons/delete.svg"
+                                                    alt="delete-icon"></td>
+                                        </tr>
+                                    </table>
+                                </mat-menu>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="addOnsDisplayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: addOnsDisplayedColumns;"></tr>
+
+                        <tr class="mat-row" *matNoDataRow>
+                            <td class="mat-cell" [attr.colspan]="addOnsDisplayedColumns.length">There is no Add-on
+                                available !!!</td>
+                        </tr>
+                    </table>
+                </div>
+            </mat-expansion-panel>
+        </div>
+    </div>
+</div>
+
+<!-- Add New Item Modal -->
+<app-add-new-item *ngIf="showAddNewItemModal" [modalData]="itemModalData" (closeModal)="toggleAddNewItemModal($event)">
+</app-add-new-item>
+
+<!-- Add New Add On Modal -->
+<app-add-new-add-on *ngIf="showAddNewAddOnModal" [modalData]="addonModalData"
+    (closeModal)="toggleAddNewAddOnModal($event)"></app-add-new-add-on>
+
+<!-- Add New Sub Category Modal -->
+<div class="modal hide drawer right-align" id="helpModalRight" role="dialog" aria-labelledby="helpModalLabel"
+    aria-hidden="true" *ngIf="showAddNewSubCategoryModal">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label class="modal-title border-0">{{isAddSubCategory ? 'Add Sub Category' : 'Edit Sub
+                    Category'}}</label>
+                <mat-icon (click)="toggleAddNewSubCategoryModal('')" data-dismiss="modal">close</mat-icon>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="subCategoryActionForm">
+                    <div class="input-details">
+                        <label class="input-heading">Category Name</label>
+                        <ng-select [items]="categoryList" bindValue="categoryId" bindLabel="categoryName"
+                            placeholder="Select Category" formControlName="categoryId">
+                        </ng-select>
+                        <app-form-error-msg [control]="subCategoryActionForm.controls.categoryId"></app-form-error-msg>
+                    </div>
+                    <div class="input-details">
+                        <label class="input-heading">Sub-Category Name</label>
+                        <mat-form-field appearance="outline">
+                            <input type="text" matInput name="discountCode" formControlName="subCategoryName"
+                                placeholder="Enter Sub-Category Name">
+                        </mat-form-field>
+                        <app-form-error-msg [control]="subCategoryActionForm.controls.subCategoryName">
+                        </app-form-error-msg>
+                    </div>
+                </form>
+                <div class="d-flex">
+                    <button class="buttons w-100 h-3 me-3" mat-button
+                        (click)="toggleAddNewSubCategoryModal('')">dismiss</button>
+                    <button class="buttons active-button w-100 h-3" mat-button
+                        (click)="submitSubCategory()">{{isAddSubCategory ? 'Add' : 'Save'}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal hide drawer right-align" id="categorySequenceModalRight" role="dialog"
+    aria-labelledby="sequenceModalLabel" aria-hidden="true"
+    *ngIf="isCategorySequenceModalVisible || isSubCategorySequenceModalVisible || isItemsSequenceModalVisible">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label class="modal-title border-0" id="exampleModalLabel">Change Sequence</label>
+                <mat-icon class="ms-3 cursor-enabled" (click)="closeSequenceModal()" data-dismiss="modal">close
+                </mat-icon>
+            </div>
+            <div class="modal-body">
+                <div class="m-0 d-flex align-items-center flex-column w-100">
+                    <span class="d-flex w-100 align-items-baseline justify-content-between">
+                        <h6 class="note mb-4"><i>Drag and drop to determine the sequence</i></h6>
+                        <span>
+                            <button type="button" class="buttons active-button" (click)="saveCategorySequence()"
+                                *ngIf="isCategorySequenceModalVisible">Save</button>
+                            <button type="button" class="buttons active-button" (click)="saveSubCategorySequence()"
+                                *ngIf="isSubCategorySequenceModalVisible">Save</button>
+                            <button type="button" class="buttons active-button" (click)="saveItemsSequence()"
+                                *ngIf="isItemsSequenceModalVisible">Save</button>
+                        </span>
+                    </span>
+                    <div class="w-100" cdkDropList cdkDropListOrientation="vertical"
+                        (cdkDropListDropped)="dropCategorySequence($event)" *ngIf="isCategorySequenceModalVisible">
+                        <div class="sequence mt-3" cdkDrag *ngFor="let category of menuList">
+                            <strong>{{category.categoryName}}</strong>
+                        </div>
+                    </div>
+                    <div class="w-100" cdkDropList cdkDropListOrientation="vertical"
+                        (cdkDropListDropped)="dropSubCategorySequence($event)"
+                        *ngIf="isSubCategorySequenceModalVisible">
+                        <div class="sequence mt-3" cdkDrag *ngFor="let subCategory of subCategoriesList">
+                            <strong>{{subCategory.subCategoryName}}</strong>
+                        </div>
+                    </div>
+                    <div class="w-100" cdkDropList cdkDropListOrientation="vertical"
+                        (cdkDropListDropped)="dropItemsSequence($event)" *ngIf="isItemsSequenceModalVisible">
+                        <div class="sequence mt-3" cdkDrag *ngFor="let menuItem of menuItemsList">
+                            <strong>{{menuItem.itemName}}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page when user intially doesn't have any input in search field for home page -->
+<div class="d-flex flex-column mt-5 justify-content-center align-items-center"
+    *ngIf="(!showAddons && !menuList.length || noCategoryData) || (showAddons && !addonGroupList.length || noAddonGroupData)">
+    <img width="131" height="131" src="../../../../assets/icons/page404.svg">
+    <div class="content d-flex flex-column gap-3">
+        <h3>Umm...no data found!</h3>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+.view-poc-dialog-wrapper {
+    padding: 2em;
+    width: 550px;
+
+    &__details {
+        height: fit-content;
+
+        &__header {
+            grid-gap: 1em;
+
+            div {
+                border-bottom: 1px solid #e5e5e5;
+            }
+
+            .title {
+                color: #6d7e8b;
+            }
+
+            .name {
+                font-size: 22px;
+            }
+        }
+
+        &__contact-details {
+            grid-gap: 1em;
+            padding: 0.5em 0;
+
+            &__contact {
+                border: 1px solid #e5e5e5;
+                padding: 1em;
+                border-radius: 10px;
+                grid-gap: 1em;
+
+                img {
+                    width: 5%;
+                }
+
+                &__poc {
+                    .poc-title {
+                        color: #6d7e8b;
+                    }
+                }
+            }
+        }
+
+        &__footer {
+            margin-top: 1em;
+            grid-gap: 1em;
+
+            label {
+                color: #6d7e8b;
+            }
+        }
+    }
+}

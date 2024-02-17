@@ -1,0 +1,62 @@
+$fit-content: fit-content;
+$primary-color: #6d7e8b;
+.bill-printer-settings-container {
+    header {
+        .navigate-to-more {
+            width: $fit-content;
+        }
+        .bill-printer-settings-title {
+            margin-top: 1em;
+            font-size: 28px;
+            color: $primary-color;
+        }
+    }
+    .pair-devices {
+        margin-top: 2em;
+        .no-printer-connected {
+            font-size: 16px;
+            color: $primary-color;
+        }
+    }
+    .networks {
+        height: $fit-content;
+        padding: 1em;
+        background: white;
+        margin-top: 3rem;
+        border-radius: 10px;
+        &__network {
+            height: $fit-content;
+            border-bottom: 1px solid $primary-color;
+            padding: 0.5em;
+            .title {
+                font-size: 22px;
+            }
+            .details {
+                font-size: 17px;
+                color: $primary-color;
+            }
+        }
+    }
+    .print-bill-copies {
+        margin-top: 2rem;
+        font-size: 22px;
+        &__quantity {
+            margin-top: 1em;
+            background: white;
+            height: 5rem;
+            border-radius: 8px;
+            padding: 1em;
+            .adding-removing-quantity {
+                width: 15%;
+                font-size: 23px;
+                mat-icon {
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}
+
+.clickable {
+    cursor: pointer;
+}

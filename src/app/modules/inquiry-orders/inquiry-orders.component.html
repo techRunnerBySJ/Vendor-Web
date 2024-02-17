@@ -1,0 +1,298 @@
+<div class="inquiry-orders-wrapper d-flex justify-content-evenly w-100 ">
+
+    
+        <div class="inquiry-orders">
+            <header class="header"><b>my orders</b></header>
+            <header class="d-flex">
+                <button class="buttons me-2 mb-5" [ngClass]="{'active-button': isConfirmingOrdersTab}" mat-button (click)="isConfirmingOrdersTab = true">
+                    Your Confirmation
+                </button>
+                <button class="buttons" mat-button [ngClass]="{'active-button': !isConfirmingOrdersTab}" (click)="isConfirmingOrdersTab = false">
+                    Customer Confirmation
+                </button>
+            </header>
+            <ng-container>
+                <!--Your confirmation order -->
+                <section class="new-orders" *ngIf="pendingYourConfirmationOrdersList?.length && isConfirmingOrdersTab;else noPendingConfirmationOrders">
+                    <div class="cursor-enabled d-flex align-items-center justify-content-between" (click)="showNewConfirmationOrders = true" [ngClass]="showNewConfirmationOrders? 'active' : 'total-new-orders'">
+                        <span>
+                            {{totalPendingConfirmationOrders}} Pending Confirmation Orders
+                        </span>
+                        <span>
+                            <img src="assets/icons/delete-icon.svg" alt="delete icon">
+                        <!-- <img src="assets/icons/order-notification-audio-on-icon.svg" class="ms-3" alt="" width="30" height="30"> -->
+                        </span>
+                    </div>
+                    <div *ngIf="showNewConfirmationOrders">
+                        <div class="order-card" *ngFor="let order of pendingYourConfirmationOrdersList| paginate: {id: 'newOrdersPagination', itemsPerPage: 50,  currentPage: currentNewOrdersPage,totalItems: totalPendingConfirmationOrders }" (click)="openInquiryOrderDetailsModal(order.inquiryOrderId,'vendor')">
+        
+                            <!-- <div *ngIf="outletDetails.parentOrChild === 'parent'" class="outlet-name text-uppercase"><strong>{{order.outletName}}</strong></div> -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="progressbar" *ngIf="isConfirmingOrdersTab">
+                                    <div [ngStyle]="{width: (order.progressbarWidth) + '%'}"
+                                    [ngClass]="{'progressbar--orange': order.isTimerAlert, 'progressbar--red': order.isTimerDanger}">
+                                </div>
+                            </span>
+                            <span class="timer--green" [ngClass]="{'timer--orange': order.isTimerAlert, 'timer--red': order.isTimerDanger}">
+                                <b>{{order.timeLeft}}</b>
+                            </span>
+                            </div>
+                            <div class="pending-your text-uppercase" *ngIf="order.status === 'customer_created'"><span>Pending <b>Your</b> Confirmation </span></div>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="d-flex align-items-center">
+                                    <b class="order-det">#{{order.inquiryOrderId}} {{order.customerName}}</b>
+                                    <a href="tel:{{order.phone}}" matTooltip="{{order.phone}}" matTooltipClass="custom-tooltip"
+                                        (click)="copyMobileToClipboard(order.phone);$event.stopPropagation()">
+                                        <img class="align-text-bottom me-2 ms-2" src="assets/icons/telephone-icon.svg" width="20" height="20">
+                                    </a>
+                                    <img class="me-2" src="assets/icons/order-notification-audio-on-icon.svg" alt="" width="25" height="25" 
+                                    (click)="defuseNotificationSoundForInquiryOrderId(order.inquiryOrderId);$event.stopPropagation()"
+                                    *ngIf="showInquiryOrderNotificationSoundOnIcon(order.inquiryOrderId); else muteNotificationSound"
+                                    >
+                                </span>
+                                <!-- <span><strong>{{order.invoiceDetails.vendorPayoutAmount}}</strong></span> -->
+                                <mat-icon class="pull-right">keyboard_arrow_right</mat-icon>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Customer confirmation order -->
+                <section class="new-orders" *ngIf="pendingCustomerConfirmationOrdersList.length && !isConfirmingOrdersTab; else noPendingCustomerConfirmationOrders">
+                        <div class="cursor-enabled d-flex align-items-center justify-content-between" (click)="showNewConfirmationOrders = true" [ngClass]="showNewConfirmationOrders? 'active' : 'total-new-orders'">
+                            <span>
+                                {{totalCustomerPendingConfirmationOrders}} Pending Confirmation Orders
+                            </span>
+                            <span>
+                                <img src="assets/icons/delete-icon.svg" alt="delete icon">
+                            <!-- <img src="assets/icons/order-notification-audio-on-icon.svg" class="ms-3" alt="" width="30" height="30"> -->
+                            </span>
+                        </div>
+                        <div *ngIf="showNewConfirmationOrders">
+                            <div class="order-card" *ngFor="let order of pendingCustomerConfirmationOrdersList | paginate: {id: 'newOrdersPagination', itemsPerPage: 50,  currentPage: currentNewOrdersPage,totalItems: totalNewOrders }" (click)="openInquiryOrderDetailsModal(order.inquiryOrderId,'customer')">
+                                <div class="pending-custmer text-uppercase"><span>Pending <b>Customer</b> Confirmation </span></div>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <span class="d-flex align-items-center">
+                                        <b class="order-det">#{{order.inquiryOrderId}} {{order.customerName}}</b>
+                                        <a href="tel:{{order.phone}}" matTooltip="{{order.phone}}" matTooltipClass="custom-tooltip"
+                                            (click)="copyMobileToClipboard(order.phone);$event.stopPropagation()">
+                                            <img class="align-text-bottom me-2 ms-2" src="assets/icons/telephone-icon.svg" width="20" height="20">
+                                        </a>
+                                    </span>
+                                    <!-- <span><strong>{{order.invoiceDetails.vendorPayoutAmount}}</strong></span> -->
+                                    <mat-icon class="pull-right">keyboard_arrow_right</mat-icon>
+                                </div>
+                            </div>
+                        </div>
+                </section>
+
+            </ng-container>
+        </div>
+        
+        <div class="ongoing-orders inquiry-orders">
+            <header>
+                <button class="buttons me-2 mb-5" [ngClass]="{'active-button': isNewOrdersTab}" mat-button (click)="isNewOrdersTab = true;isPreparingOrdersTab = false; isInTransitOrdersTab =false;">
+                    New order
+                </button>
+                <button class="buttons me-2 mb-5" [ngClass]="{'active-button': isPreparingOrdersTab}" mat-button (click)="isPreparingOrdersTab = true; isNewOrdersTab = false; isInTransitOrdersTab =false;">
+                    preparing
+                </button>
+                <button class="buttons" mat-button [ngClass]="{'active-button': isInTransitOrdersTab}" (click)="isPreparingOrdersTab = false; isNewOrdersTab = false; isInTransitOrdersTab = true;">
+                    in transit
+                </button>
+            </header>
+            <ng-container>
+
+                <section class="new-orders" *ngIf="newOrdersList.length && isNewOrdersTab && !isPreparingOrdersTab && !isInTransitOrdersTab;else noNewOrders">
+                    <div class="cursor-enabled d-flex align-items-center justify-content-between" (click)="showNewOrders = true" [ngClass]="showNewOrders? 'active' : 'total-new-orders'">
+                        <span>
+                            {{totalNewOrders}} new orders
+                        </span>
+                        <span>
+                            <img src="assets/icons/delete-icon.svg" alt="delete icon">
+                        </span>
+                    </div>
+                    <div *ngIf="showNewOrders">
+                        <div class="order-card" *ngFor="let order of newOrdersList| paginate: {id: 'newOrdersPagination', itemsPerPage: 50,  currentPage: currentNewOrdersPage,totalItems: totalNewOrders }" (click)="openOrderDetailsModal(order.orderId)">
+        
+                            <div *ngIf="outletDetails.parentOrChild === 'parent'" class="outlet-name text-uppercase"><strong>{{order.outletName}}</strong></div>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="progressbar">
+                                    <div [ngStyle]="{width: (order.progressbarWidth) + '%'}"
+                                        [ngClass]="{'progressbar--orange': order.isTimerAlert, 'progressbar--red': order.isTimerDanger}">
+                                    </div>
+                                </span>
+                                <span class="timer--green" [ngClass]="{'timer--orange': order.isTimerAlert, 'timer--red': order.isTimerDanger}">
+                                    <b>{{order.timeLeft}}</b>
+                                </span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="d-flex align-items-center">
+                                    <b class="order-det">#{{order.orderId}} {{order.customerDetails.name}}</b>
+                                    <a href="tel:{{order.customerDetails.phone}}" matTooltip="{{order.customerDetails.phone}}" matTooltipClass="custom-tooltip"
+                                        (click)="copyMobileToClipboard(order.customerDetails.phone);$event.stopPropagation()">
+                                        <img class="align-text-bottom me-2 ms-2" src="assets/icons/telephone-icon.svg" width="20" height="20">
+                                    </a>
+                                    <img class="me-2" src="assets/icons/order-notification-audio-on-icon.svg" alt="" width="25" height="25" 
+                                    (click)="defuseNotificationSoundForOrderId(order.orderId);$event.stopPropagation()"
+                                    *ngIf="showNotificationSoundOnIcon(order.orderId); else muteNotificationSound">
+                                </span>
+                                <span><strong>{{order.invoiceDetails.vendorPayoutAmount}}</strong></span>
+                            </div>
+                            <div class="grid">
+                                <span class="cart d-flex">
+                                    <span class="order-det">{{order.orderItems[0].orderItemQuantity}} x
+                                        {{order.orderItems[0].orderItemName}}</span>
+                                <span *ngIf="order.orderItems.length > 1"><b> + {{order.orderItems.length - 1}} More</b></span>
+                                </span>
+                                <mat-icon class="pull-right">keyboard_arrow_right</mat-icon>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <pagination-controls id="newOrdersPagination" (pageChange)="currentNewOrdersPage = $event;getNewOrdersData()"></pagination-controls> -->
+                </section>
+
+                <!-- Preparing Orders -->
+            <section *ngIf="preparingOrdersList.length && isPreparingOrdersTab && !isNewOrdersTab && !isInTransitOrdersTab; else noPreparingOrders">
+                <div class="order-card ongoing " *ngFor="let order of preparingOrdersList | paginate: {id: 'preparingOrdersPagination', itemsPerPage: 50,  currentPage: currentPreparingOrdersPage,totalItems: totalPreparingOrders }" (click)="openOrderDetailsModal(order.orderId)">
+
+                    <div *ngIf="outletDetails.parentOrChild === 'parent'" class="outlet-name text-uppercase"><strong>{{order.outletName}}</strong></div>
+                    <div class="d-flex justify-content-between align-items-center mb-3" *ngIf="!order.orderMarkedReadyTime">
+                        <span class="progressbar">
+                            <div [ngStyle]="{width: (order.progressbarWidth) + '%'}"
+                                [ngClass]="{'progressbar--orange': order.isTimerAlert, 'progressbar--red': order.isTimerDanger}">
+                            </div>
+                        </span>
+                        <span class="timer--green" [ngClass]="{'timer--orange': order.isTimerAlert, 'timer--red': order.isTimerDanger}"><b>
+                                {{order.preparationTimeLeft}}</b></span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="order-det">
+                            <b>#{{order.orderId}} {{order.customerDetails.name}}</b>
+                            <a href="tel:{{order.customerDetails.phone}}" matTooltip="{{order.customerDetails.phone}}" matTooltipClass="custom-tooltip"
+                                (click)="copyMobileToClipboard(order.customerDetails.phone);$event.stopPropagation()">
+                                <img class="align-text-bottom ms-2" src="assets/icons/telephone-icon.svg" width="20" height="20">
+                            </a>
+                        </span>
+                        <span><strong>{{order.invoiceDetails.vendorPayoutAmount}}</strong></span>
+                    </div>
+                    <span class="cart d-flex">
+                        <span class="order-det">{{order.orderItems[0].orderItemQuantity}} x
+                            {{order.orderItems[0].orderItemName}}</span>
+                    <span *ngIf="order.orderItems.length > 1"><b> + {{order.orderItems.length - 1}} More</b></span>
+                    </span>
+                    <div class="grid">
+                        <span>
+                            <div class="rider-details" *ngIf="order.riderName">
+                                <img class="align-text-bottom" src="assets/delivery-partner.png" alt="" width="20"
+                                    height="20">
+                                {{order.riderName}}
+                                <a href="tel:{{order.riderContact}}" matTooltip="{{order.riderContact}}" matTooltipClass="custom-tooltip"
+                                    (click)="copyMobileToClipboard(order.riderContact);$event.stopPropagation()">
+                                    <img class="align-text-bottom ms-2" src="assets/icons/telephone-icon.svg" width="20"
+                                        height="20">
+                                </a>
+                            </div>
+                            <div class="mt-1" *ngIf="order.riderName && order.deliveryStatus !== 'arrived'"><b> Rider
+                                    Arriving in {{order.pickupETA}} Min</b></div>
+                            <div class="mt-1" *ngIf="order.deliveryStatus === 'arrived'"><b> Rider Arrived</b></div>
+                        </span>
+                        <button class="ready-btn" (click)="markReadyOrder(order);$event.stopPropagation()" *ngIf="!order.orderMarkedReadyTime">mark ready</button>
+                        <button class="ready-btn white-btn" *ngIf="order.orderMarkedReadyTime"> <img
+                                class="align-text-top me-1" src="assets/icons/green-tick-icon.svg"
+                                alt="green tick icon">order ready</button>
+                    </div>
+                </div>
+                <!-- <pagination-controls id="preparingOrdersPagination" (pageChange)="currentPreparingOrdersPage = $event;getPreparingOrdersData()"></pagination-controls> -->
+            </section>
+            <!-- In-Transit Orders -->
+            <section *ngIf="inTransitOrdersList.length && isInTransitOrdersTab && !isNewOrdersTab && !isPreparingOrdersTab; else noInTransitOrders">
+                <div class="order-card ongoing" *ngFor="let order of inTransitOrdersList | paginate: {id: 'inTransitOrdersPagination', itemsPerPage: 50,  currentPage: currentInTransitOrdersPage,totalItems: totalInTransitOrders }" (click)="openOrderDetailsModal(order.orderId)">
+                    <div *ngIf="outletDetails.parentOrChild === 'parent'" class="outlet-name text-uppercase"><strong>{{order.outletName}}</strong></div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="order-det">
+                            <b>#{{order.orderId}} {{order.customerDetails.name}}</b>
+                            <a href="tel:{{order.customerDetails.phone}}" matTooltip="{{order.customerDetails.phone}}" matTooltipClass="custom-tooltip"
+                                (click)="copyMobileToClipboard(order.customerDetails.phone);$event.stopPropagation()">
+                                <img class="align-text-bottom ms-2" src="assets/icons/telephone-icon.svg" width="20" height="20">
+                            </a>
+                        </span>
+                        <span><strong>{{order.invoiceDetails.vendorPayoutAmount}}</strong></span>
+                    </div>
+                    <span class="cart d-flex">
+                        <span class="order-det">{{order.orderItems[0].orderItemQuantity}} x
+                            {{order.orderItems[0].orderItemName}}</span>
+                    <span *ngIf="order.orderItems.length > 1"><b> + {{order.orderItems.length - 1}} More</b></span>
+                    </span>
+                    <div class="grid">
+                        <span>
+                            <div class="rider-details">
+                                <img class="align-text-bottom" src="assets/delivery-partner.png" alt="" width="20"
+                                    height="20">
+                                {{order.riderName}}
+                                <a href="tel:{{order.riderContact}}" matTooltip="{{order.riderContact}}" matTooltipClass="custom-tooltip"
+                                    (click)="copyMobileToClipboard(order.riderContact);$event.stopPropagation()">
+                                    <img class="align-text-bottom ms-2" src="assets/icons/telephone-icon.svg" width="20"
+                                        height="20">
+                                </a>
+                            </div>
+                            <div class="mt-1" *ngIf="order.riderName && order.deliveryStatus === 'dispatched'"><b>
+                                    Rider has left the outlet</b></div>
+                            <div class="mt-1"
+                                *ngIf="order.riderName && order.deliveryStatus === 'arrived_customer_doorstep'"><b>
+                                    Rider is at customer doorstep</b></div>
+                        </span>
+                        <button class="ready-btn white-btn"> <img class="align-text-top me-2"
+                                src="assets/icons/green-tick-icon.svg" alt="green tick icon"> in transit</button>
+                    </div>
+                </div>
+                <!-- <pagination-controls id="inTransitOrdersPagination" (pageChange)="currentInTransitOrdersPage = $event;getInTransitOrdersData()"></pagination-controls> -->
+            </section>
+            </ng-container>
+        </div>
+    
+
+</div>
+<ng-template #offline>
+    <section class="offline d-flex flex-column justify-content-center align-items-center px-5">
+        <img src="assets/offline.svg" alt="no new orders">
+        <ng-container *ngIf="currentSubscription">
+            <h2><b>You're Offline</b></h2>
+            <h3 *ngIf="outletDetails.isInHolidaySlot && outletDetails.holidaySlotCreatedBy === 'vendor'">
+                Holiday slot will end {{showOutletOpeningTimer ? 'in' : 'on'}} {{showOutletOpeningTimer ? outletOpeningTimer : (outletDetails.nextOpensAt | date: 'd MMM y, h:mm a') }}
+            </h3>
+            <h3 *ngIf="outletDetails.isInHolidaySlot && outletDetails.holidaySlotCreatedBy === 'admin'">
+                Outlet is currently in Holiday slot by Admin. Will end {{showOutletOpeningTimer ? 'in' : 'on'}} {{showOutletOpeningTimer ? outletOpeningTimer : (outletDetails.nextOpensAt | date: 'd MMM y, h:mm a') }}
+            </h3>
+            <h3 *ngIf="!outletDetails.isInHolidaySlot && !outletDetails.isOpen">
+                Your Outlet is currently closed for business. Will open {{showOutletOpeningTimer ? 'in' : 'on'}} {{showOutletOpeningTimer ? outletOpeningTimer : (outletDetails.nextOpensAt | date: 'd MMM y, h:mm a') }}
+            </h3>
+            <p *ngIf="outletDetails.isInHolidaySlot  && outletDetails.holidaySlotCreatedBy === 'vendor'">Turn on the toggle to start receiving orders
+            </p>
+        </ng-container>
+        <ng-container *ngIf="!currentSubscription">
+            <h3>
+                {{ role === 'owner' ? "You're Missing out on all advanced features, Get the subscription and enjoy all the benefits" : "You're Missing out on all advanced features, Contact your owner and get the subscription"}}
+            </h3>
+            <!-- <button mat-button class="buttons active-button" *ngIf="role === 'owner'" (click)="navigateToSubscriptionPage()">Subscribe</button> -->
+        </ng-container>
+    </section>
+</ng-template>
+<ng-template #noPendingConfirmationOrders>
+    <img *ngIf="isConfirmingOrdersTab" src="assets/no-new-orders.svg" alt="no new confirmation orders">
+</ng-template>
+
+<ng-template #noPendingCustomerConfirmationOrders>
+    <img *ngIf="!isConfirmingOrdersTab" src="assets/no-new-orders.svg" alt="no new orders">
+</ng-template>
+<ng-template #noNewOrders>
+    <img *ngIf="isNewOrdersTab" src="assets/no-new-orders.svg" alt="no new orders">
+</ng-template>
+
+<ng-template #noPreparingOrders>
+    <img *ngIf="isPreparingOrdersTab" src="assets/no-ongoing-orders.svg" alt="no preparing orders">
+</ng-template>
+
+<ng-template #noInTransitOrders>
+    <img *ngIf="isInTransitOrdersTab" src="assets/no-ongoing-orders.svg" alt="no in-transit orders">
+</ng-template>

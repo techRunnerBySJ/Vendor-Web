@@ -1,0 +1,47 @@
+<section class="dialog-wrapper">
+    <h5 class="mb-4">Select custom duration (optional) </h5>
+   <form [formGroup]="custonDurationForm">
+        <div class="row mb-3">
+            <div class="input-details col-6">
+                <label class="input-heading">Start Date</label>
+                <mat-form-field appearance="outline">
+                    <input matInput (click)="customStartDate.open()" [matDatepicker]="customStartDate" [min]="minStartDate"  [max]="maxDate" [readonly]="true"
+                         name="customStartDate" formControlName="startDate" placeholder="Select date" (dateChange)="onStartDateChange($event)">
+                    <mat-datepicker-toggle matSuffix [for]="customStartDate" matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #customStartDate></mat-datepicker>
+                </mat-form-field>
+                <app-form-error-msg [control]="custonDurationForm.controls.startDate"></app-form-error-msg>
+            </div>
+            <div class="input-details col-6">
+                <label class="input-heading">Start Time</label>
+                <mat-form-field appearance="outline">
+                    <input matInput type="time" name="customStartTime" formControlName="startTime" placeholder="Select time">
+                    <!-- <ngx-material-timepicker-toggle matSuffix [for]="customStartTime"></ngx-material-timepicker-toggle>
+                    <ngx-material-timepicker #customStartTime [defaultTime]="currentTime"></ngx-material-timepicker> -->
+                </mat-form-field>
+                <app-form-error-msg [control]="custonDurationForm.controls.startTime"></app-form-error-msg>
+            </div>
+            <div class="input-details col-6 mt-3">
+                <label class="input-heading">End Date</label>
+                <mat-form-field appearance="outline">
+                    <input matInput (click)="customEndDate.open()" [matDatepicker]="customEndDate" [min]="minEndDate" [max]="maxDate" [readonly]="true"
+                         name="customEndDate" formControlName="endDate" placeholder="Select date">
+                    <mat-datepicker-toggle matSuffix [for]="customEndDate" matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #customEndDate></mat-datepicker>
+                </mat-form-field>
+                <app-form-error-msg [control]="custonDurationForm.controls.endDate"></app-form-error-msg>
+            </div>
+            <div class="input-details col-6 mt-3">
+                <label class="input-heading">End Time</label>
+                <mat-form-field appearance="outline">
+                    <input matInput type="time" name="customEndTime" formControlName="endTime" placeholder="Select time">
+                    <!-- <ngx-material-timepicker-toggle matSuffix [for]="customEndTime"></ngx-material-timepicker-toggle>
+                    <ngx-material-timepicker #customEndTime [defaultTime]="currentTime"></ngx-material-timepicker> -->
+                </mat-form-field>
+                <app-form-error-msg [control]="custonDurationForm.controls.endTime"></app-form-error-msg>
+            </div>
+        </div>
+   </form>
+    <button class="buttons active-button h-3 w-100 mb-2" mat-button (click) ="onConfirm()"> opt in</button>
+    <button class="buttons buttons--white h-3 w-100 mb-2" mat-button (click) ="onDismiss()"> Dismiss</button>
+</section>

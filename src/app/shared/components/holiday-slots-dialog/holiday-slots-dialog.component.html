@@ -1,0 +1,36 @@
+<section class="dialog-wrapper">
+    <h4 class="mb-4">When will the {{data.openedFor}} next be available for customer? </h4>
+   <form [formGroup]="offlineForm">
+        <div class="radio-btn">
+            <input type="radio" [value]="false" name="slotSelection" formControlName="slotSelection" (change)="slotSelectionChange()">
+            <span>Available tomorrow</span>
+        </div>
+        <div class="radio-btn">
+            <input type="radio" [value]="true" name="slotSelection" formControlName="slotSelection"  (change)="slotSelectionChange()">
+            <span>Select custom date & time</span>
+        </div>
+        <div class="row mb-3" *ngIf="showCustomDateTimeFields">
+            <div class="input-details col-6">
+                <label class="input-heading">Date</label>
+                <mat-form-field appearance="outline">
+                    <input matInput (click)="customDate.open()" [matDatepicker]="customDate" [min]="currentDate" [readonly]="true"
+                         name="customDate" formControlName="date" placeholder="Select date">
+                    <mat-datepicker-toggle matSuffix [for]="customDate" matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #customDate></mat-datepicker>
+                </mat-form-field>
+                <app-form-error-msg [control]="offlineForm.controls.date"></app-form-error-msg>
+            </div>
+            <div class="input-details col-6">
+                <label class="input-heading">Time</label>
+                <mat-form-field appearance="outline">
+                    <input matInput type="text" [ngxTimepicker]="customTime"  readonly name="customTime" formControlName="time" placeholder="Select time">
+                    <ngx-material-timepicker-toggle matSuffix [for]="customTime"></ngx-material-timepicker-toggle>
+                    <ngx-material-timepicker #customTime [defaultTime]="currentTime"></ngx-material-timepicker>
+                </mat-form-field>
+                <app-form-error-msg [control]="offlineForm.controls.time"></app-form-error-msg>
+            </div>
+        </div>
+   </form>
+    <button class="buttons active-button h-3 w-100 mb-2" mat-button (click) ="onConfirm()"> save</button>
+    <button class="buttons buttons--white h-3 w-100 mb-2" mat-button (click) ="onDismiss()"> Dismiss</button>
+</section>

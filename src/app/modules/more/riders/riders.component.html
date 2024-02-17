@@ -1,0 +1,97 @@
+<div class="riders-container">
+
+  <!-- header and back button -->
+  <header class="d-flex">
+    <b><label class="navigate-to-more" (click)="navigateToMore()">Back</label></b>
+    <div class="heading">
+      <b><label class="riders-title">Riders List</label></b>
+      <div class="search-container d-flex">
+        <div class="p-1 mb-4">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <mat-icon class="fa fa-search mr-2">search</mat-icon>
+            </div>
+            <input type="search" placeholder="Search" aria-describedby="button-addon2"
+              class="form-control border-0 bg-light">
+          </div>
+        </div>
+        <button (click)="openAddRidersModal()">ADD RIDER</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- main section containing all the features -->
+  <table class="rwd-table">
+    <tr>
+      <th>ID</th>
+      <th>NAME</th>
+      <th>CONTACT NO</th>
+      <th>EMAIL</th>
+      <th>ORDER DELIVERED</th>
+      <th>ACTIONS</th>
+    </tr>
+    <tr>
+      <td data-th="ID">234223</td>
+      <td data-th="NAME">Param Singh</td>
+      <td data-th="CONTACT NO">9892236965</td>
+      <td data-th="EMAIL">paramsingh@gmail.com</td>
+      <td data-th="ORDER DELIVERED">23</td>
+      <td data-th="ACTIONS">
+        <mat-icon>menu</mat-icon>
+      </td>
+    </tr>
+    <tr>
+      <td data-th="ID">234223</td>
+      <td data-th="NAME">Param Singh</td>
+      <td data-th="CONTACT NO">9892236965</td>
+      <td data-th="EMAIL">paramsingh@gmail.com</td>
+      <td data-th="ORDER DELIVERED">23</td>
+      <td data-th="ACTIONS">
+        <mat-icon>menu</mat-icon>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<!-- Add Riders Modal -->
+<div class="modal hide drawer right-align" id="addRidersModalRight" role="dialog" aria-labelledby="addRidersModalLabel"
+  aria-hidden="true" *ngIf="addRiders">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <label class="modal-title border-0" id="exampleModalLabel">Edit User</label>
+        <mat-icon (click)="closeAddRidersModal()" data-dismiss="modal">close</mat-icon>
+      </div>
+      <div class="modal-body">
+        <label class="input-heading" for="email">Enter Name</label>
+        <div class="input-field">
+          <mat-form-field class="custom-name-field col-12" appearance="outline">
+            <input matInput formControlName="userName" type="text" placeholder="Enter name" />
+          </mat-form-field>
+        </div>
+        <label class="input-heading" for="email">Enter Email</label>
+        <div class="input-field">
+          <mat-form-field class="custom-email-field col-12" appearance="outline">
+            <input matInput formControlName="userEmail" type="email" placeholder="Enter email" />
+          </mat-form-field>
+        </div>
+        <label class="input-heading" for="mobileNumber">Mobile Number</label>
+        <div class="row mobile-number-details">
+          <div class="custom-code-field col-2" appearance="outline">
+            <input class="country-code" type="text" matInput formControlName="userCountryCode" placeholder="+91" />
+          </div>
+          <div class="input-field col-10">
+            <mat-form-field class="custom-mobile-field" appearance="outline">
+              <input matInput formControlName="userMobile" type="text" placeholder="Enter mobile no" />
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="closeAddRidersModal()">
+          CONFIRM
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,538 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "~@ng-select/ng-select/themes/default.theme.css";
+@import "~ngx-toastr/toastr";
+$border-radius: 8px;
+$primary-color: #0d1d28;
+$cursor: pointer;
+$text-transform: uppercase;
+
+@mixin display-flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+@mixin height-width {
+    height: 100%;
+    width: 100%;
+}
+
+html {
+    @include height-width;
+}
+
+body {
+    margin: 0;
+    font-family: Poppins, "Helvetica Neue", sans-serif !important;
+    background-color: #f2f5f8 !important;
+    @include height-width;
+}
+
+.overlay-enabled {
+    overflow: hidden;
+}
+
+/*body scroll starts*/
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: #a8aaa7;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #535452;
+    height: 50px;
+}
+
+.ng-select.ng-select-single {
+    .ng-select-container {
+        height: 3.2em;
+        border-radius: $border-radius;
+        margin: 0.25em 0;
+
+        .ng-value-container {
+            .ng-input {
+                top: auto;
+            }
+        }
+    }
+}
+
+.ng-select.ng-select-multiple {
+    .ng-select-container {
+        min-height: 3.375em;
+        border-radius: $border-radius;
+
+        .ng-value-container {
+            .ng-placeholder {
+                top: auto;
+            }
+        }
+    }
+}
+
+.ng-select.ng-select-focused:not(.ng-select-opened) > .ng-select-container {
+    border: 2px solid $primary-color !important;
+    box-shadow: none;
+}
+
+.ng-select.ng-invalid.ng-touched .ng-select-container {
+    border: 2px solid #f44336;
+}
+
+.ng-select.ng-select-disabled > .ng-select-container {
+    color: rgba(0, 0, 0, 0.38);
+}
+
+app-form-error-msg ul {
+    list-style-type: none;
+    padding: 5px 0px 5px 12px;
+    font-size: 12px;
+    margin: 0px;
+}
+
+.mat-form-field {
+    // line-height: unset !important;
+    font-family: Poppins, "Helvetica Neue", sans-serif !important;
+    width: 100% !important;
+
+    .mat-form-field-wrapper {
+        padding-bottom: 0 !important;
+
+        .mat-form-field-flex {
+            align-items: center !important;
+        }
+    }
+
+    a {
+        color: $primary-color !important;
+        text-decoration: none;
+        text-transform: $text-transform;
+        letter-spacing: 1px;
+        font-weight: 600;
+        font-size: 0.9em;
+        cursor: $cursor;
+    }
+
+    mat-icon {
+        cursor: $cursor;
+    }
+}
+
+.cursor-enabled {
+    cursor: $cursor;
+}
+
+.cursor-disabled {
+    cursor: none;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 0.5em 0 1em 0 !important;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline .mat-form-field-outline-start {
+    border-radius: $border-radius 0 0 $border-radius !important;
+    background-color: #fff !important;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline .mat-form-field-outline-end {
+    border-radius: 0 $border-radius $border-radius 0 !important;
+}
+
+.mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+    color: $primary-color !important;
+}
+
+.mat-form-field-disabled .mat-form-field-outline .mat-form-field-outline-end,
+.mat-form-field-outline-start {
+    background-color: #f9f9f9;
+}
+
+.mat-form-field-appearance-outline.mat-form-field-disabled .mat-form-field-outline {
+    color: #ccc;
+}
+
+.mat-menu-panel {
+    min-height: auto !important;
+    max-height: 90vh !important;
+    border-radius: 12px !important;
+
+    .mat-menu-content:not(:empty) {
+        padding: 0.5em 1em !important;
+    }
+}
+
+.mat-dialog-container {
+    padding: 0 !important;
+    border-radius: 2em !important;
+    box-shadow: none !important;
+}
+
+.mat-expansion-panel-header,
+.mat-expansion-panel-content {
+    font-family: Poppins, "Helvetica Neue", sans-serif !important;
+}
+
+th.mat-header-cell {
+    padding: 10px !important;
+    font-size: 20px;
+}
+
+td.mat-cell {
+    padding: 5px !important;
+    font-size: 18px;
+}
+
+th.mat-header-cell:first-of-type,
+td.mat-cell:first-of-type {
+    padding-left: 20px !important;
+}
+
+tr.mat-row:nth-child(2n + 1) {
+    background-color: #b9b7d13e;
+}
+
+tr.mat-row:nth-child(2n) {
+    background-color: #b9b7d15e;
+}
+
+.mat-calendar-body-selected {
+    background-color: #fcd400;
+    border: 1px solid #0d1d28;
+    color: #0d1d28;
+}
+
+.mat-datepicker-toggle-active {
+    color: #0d1d28;
+}
+
+.mat-calendar-body-today.mat-calendar-body-selected {
+    box-shadow: none;
+}
+
+.mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover
+    > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+    background-color: #fcd400 !important;
+    color: #0d1d28 !important;
+}
+
+.timepicker-overlay {
+    z-index: 1000 !important;
+}
+
+.timepicker-backdrop-overlay {
+    z-index: 1000 !important;
+}
+
+.timepicker {
+    border: 2px solid #0d1d28;
+}
+
+.timepicker__header {
+    background-color: #fcd400 !important;
+}
+
+.clock-face {
+    --clock-hand-color: #fcd400;
+}
+
+.timepicker-dial__item_active {
+    color: #0d1d28 !important;
+}
+
+.clock-face__number > span.active,
+.timepicker-button {
+    color: #0d1d28 !important;
+}
+
+.ngx-img-wrapper {
+    width: 235px !important;
+    height: 155px !important;
+    background-color: #f2f5f8 !important;
+    border-radius: $border-radius !important;
+    border: none !important;
+    background-image: none !important;
+
+    .ngx-img-message button {
+        background-color: $primary-color !important;
+        border-radius: 4px !important;
+        font-weight: 600 !important;
+        font-size: 10px !important;
+        letter-spacing: 1px !important;
+    }
+
+    .ngx-img-upload {
+        display: none;
+    }
+
+    .ngx-img-wrapper p {
+        color: #acb8c1 !important;
+        font-size: 14px !important;
+    }
+}
+
+.ngx-pagination {
+    text-align: right;
+    margin: 1em 0 0 0 !important;
+
+    a {
+        text-decoration: none;
+    }
+
+    :not(.pagination-next, .pagination-previous) a {
+        border-radius: 50% !important;
+    }
+
+    .current {
+        background-color: #fcd400 !important;
+        color: #0a0a0a !important;
+        border-radius: 50%;
+    }
+}
+
+.toast-container .ngx-toastr {
+    min-width: 300px !important;
+    width: 100% !important;
+}
+
+//common css for all components
+.buttons {
+    height: 2.5em;
+    font-size: 16px;
+    color: #8d9da8;
+    text-transform: $text-transform;
+    border-radius: 6px !important;
+    letter-spacing: 1px;
+    border: 1px solid #d2d9de !important;
+
+    mat-icon {
+        font-size: 22px;
+    }
+}
+
+.active-button {
+    background-color: $primary-color;
+    color: #fff;
+    border: none !important;
+}
+
+.buttons--yellow {
+    background-color: #fcd400;
+    color: $primary-color;
+    text-transform: capitalize;
+    border: none !important;
+}
+
+.buttons--white {
+    color: $primary-color;
+    border: none !important;
+    background-color: #fff;
+}
+
+.h-3 {
+    height: 3.5em;
+}
+
+.input-heading {
+    font-weight: 600;
+    font-size: 0.9em;
+    text-transform: $text-transform;
+}
+
+.modal {
+    z-index: 10 !important;
+
+    /*From Right*/
+    &.drawer {
+        display: flex !important;
+
+        .modal-dialog {
+            max-width: 35% !important;
+            margin: 0px;
+            display: flex;
+            flex: auto;
+            box-shadow: -4px -4px 20px 0px #aaa !important;
+
+            .modal-content {
+                border: none;
+
+                .modal-header {
+                    font-size: 2em;
+                    font-weight: 600;
+                    padding: 1rem 2rem;
+
+                    mat-icon {
+                        cursor: $cursor;
+                    }
+                }
+
+                .modal-body {
+                    overflow: auto;
+                    grid-gap: 1em;
+                    @include display-flex-column;
+                    padding: 2em;
+
+                    form {
+                        @include display-flex-column;
+                    }
+
+                    .user-name {
+                        font-size: 1em;
+                        font-weight: 600;
+                    }
+
+                    .input-details {
+                        @include display-flex-column;
+                        grid-gap: 0.3em;
+                    }
+                }
+            }
+        }
+
+        &.show {
+            pointer-events: auto;
+
+            * {
+                pointer-events: auto;
+            }
+
+            .modal-dialog {
+                transform: translate(0, 0);
+            }
+        }
+
+        &.right-align {
+            flex-direction: row-reverse;
+        }
+    }
+}
+
+// .mat-sort-header-container{
+// display:none !important;
+// }
+.mat-sort-header-content {
+    text-align: start !important;
+}
+
+.mat-tab-label {
+    font-size: 20px;
+    text-transform: uppercase;
+    color: black;
+}
+
+.mat-tab-group {
+    max-height: 90vh;
+    font-family: Poppins, "Helvetica Neue", sans-serif;
+
+    .mat-tab-body-content {
+        overflow: hidden !important;
+
+        &:hover {
+            overflow: auto !important;
+        }
+    }
+
+    .mat-tab-group.mat-primary .mat-ink-bar,
+    .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+        background-color: #fcd400;
+    }
+
+    .mat-tab-header-pagination {
+        z-index: 0 !important;
+    }
+}
+
+.custom-tooltip {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status {
+    font-size: 14px;
+    letter-spacing: 1px;
+    line-height: 1em;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.status--green {
+    color: #04a971;
+    background-color: rgba(4, 169, 113, 0.1);
+}
+
+.status--orange {
+    color: #ea7407;
+    background-color: rgba(234, 116, 7, 0.1);
+}
+
+.status--red {
+    color: #d71645;
+    background-color: rgba(215, 22, 69, 0.1);
+}
+
+// .carousel-arrow{
+//     background-color: transparent !important;
+// }
+.toast-container {
+    width: 400px !important;
+}
+.text-red {
+    color: #d71645;
+}
+
+//Menu sequence modal
+.dialog-wrapper {
+    margin: 0 auto;
+    padding: 2em;
+    width: 400px;
+}
+
+.sequence {
+    width: 100%;
+    background-color: #fdf2cc;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 2px dashed #fcd400;
+    color: #0d1d28;
+    cursor: move;
+    text-transform: uppercase;
+}
+
+.cdk-drag-preview {
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 5px 5px -3px rgba(252, 212, 0, 0.2), 0 8px 10px 1px rgba(252, 212, 0, 0.14),
+        0 3px 14px 2px rgba(252, 212, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+    opacity: 0;
+}
+
+.cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drop-list-dragging .offer-code:not(.cdk-drag-placeholder) {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.note {
+    color: #6d7e8b;
+}
+
+// Hide headers and footers on printed pages
+@media print {
+    @page {
+        margin: 0;
+    }
+}
+.strikeThrough {
+    text-decoration: line-through;
+}

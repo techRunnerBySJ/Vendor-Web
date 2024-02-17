@@ -1,0 +1,40 @@
+.dialog-wrapper {
+  margin: 0 auto;
+  padding: 2em;
+  width: 400px;
+}
+
+  .offer-code {
+    width: fit-content;
+    background-color: #fdf2cc;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 2px dashed #fcd400;
+    color: #0d1d28;
+    cursor: move;
+    text-transform: uppercase;
+  }
+
+  .cdk-drag-preview {
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 5px 5px -3px rgba(252, 212, 0, 0.2), 0 8px 10px 1px rgba(252, 212, 0, 0.14),
+      0 3px 14px 2px rgba(252, 212, 0, 0.12);
+  }
+
+  .cdk-drag-placeholder {
+    opacity: 0;
+  }
+
+  .cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .cdk-drop-list-dragging .offer-code:not(.cdk-drag-placeholder) {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .note {
+    color: #6d7e8b;
+  }
+

@@ -1,0 +1,48 @@
+<div class="login-main">
+    <div class="login-wrapper d-flex justify-content-center align-items-center">
+        <div class="box-form">
+
+            <!-- login form and forgot password form -->
+            <div class="login-form">
+
+                <!-- form heading and logo -->
+                <app-form-header></app-form-header>
+
+                <!-- login and forgot password form email and password details -->
+                <form [formGroup]="loginForm" autocomplete="" class="login-form-details">
+                    <section class="login-form-details__input-data">
+
+                        <!-- loginId field for login form -->
+                        <label class="input-heading" for="">Login Id</label>
+                        <div class="input-field">
+                            <mat-form-field class="custom-email-field" appearance="outline">
+                                <input matInput formControlName="userLoginId" type="text" placeholder="Enter Login Id" />
+                            </mat-form-field>
+                            <app-form-error-msg [control]="loginForm.controls.userLoginId"></app-form-error-msg>
+                        </div>
+
+                        <!-- password field for login form -->
+                        <label class="input-heading" for="password">Password</label>
+                        <div class="input-password-field">
+                            <mat-form-field class="custom-password-field" appearance="outline">
+                                <input matInput formControlName="userPassword" [type]="fieldTextType ? 'text' : 'password'" placeholder="Enter password" />
+                                <mat-icon matSuffix *ngIf="passwordControlContainsData()" (click)="fieldTextType = !fieldTextType">{{fieldTextType ? 'visibility_off' : 'visibility'}}</mat-icon>
+                            </mat-form-field>
+                            <app-form-error-msg [control]="loginForm.controls.userPassword"></app-form-error-msg>
+                        </div>
+
+                    </section>
+
+                    <!-- button to proceed further after details verification -->
+                    <button class="buttons active-button h-3 mt-3" mat-button (click)="sendLoginIdAndPassword()">PROCEED</button><br />
+                    <!-- forgot password link -->
+                    <a (click)="navigateToForgotPassword()">
+                        FORGOT PASSWORD?</a>
+
+                </form>
+            </div>
+        </div>
+        <!-- footer for login and forgot password form -->
+        <app-footer></app-footer>
+    </div>
+</div>

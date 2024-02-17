@@ -1,0 +1,36 @@
+.footer-links {
+    width: 100%;
+    background-color: #0d1d28;
+    color: #fff;
+    justify-content: space-around;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    padding: 0.5em 0;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    max-height: 6rem;
+    &__social-links {
+        display: flex;
+        align-items: center;
+        grid-gap: 3em;
+        img {
+            max-height: 3em;
+        }
+        a {
+            color: #fff;
+            text-decoration: none;
+        }
+    }
+    &__download-links {
+        margin-right: 6em;
+        grid-gap: 2em;
+        .play-store {
+            height: 4em;
+        }
+        .app-store {
+            height: 2.75em;
+        }
+    }
+}

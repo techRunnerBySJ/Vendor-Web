@@ -1,0 +1,173 @@
+<div class="home-wrapper">
+    <nav class="home-wrapper__side-nav">
+        <div class="side-nav-header">
+            <img src="assets/speedyy-icon.svg" alt="">
+            <img src="assets/speedyy-text.svg" alt="">
+        </div>
+
+        <div class="nav-links">
+            <ul>
+                <ng-container *ngFor="let link of navLinks;let i = index">
+                    <li [routerLink]="[link.route]" routerLinkActive="active">
+                        <a><img class="nav-icon" [src]="link.icon" [alt]="link.route"><span>{{link.name}}</span>
+                            <img class="ms-5" src="assets/icons/order-notification-audio-on-icon.svg" width="25"
+                                height="25" alt=""
+                                *ngIf="link.name === 'my orders' && showSoundNotificationIconInMyOrderTab()">
+                        </a>
+                    </li>
+                </ng-container>
+            </ul>
+        </div>
+    </nav>
+    <section class="home-wrapper__content">
+        <header class="header">
+            <div class="status" *ngIf="outletDetails.parentOrChild !== 'parent'">
+                <span>{{outletDetails.isOpen ? "You're Online" : "You're Offline"}}</span>
+                <input type="checkbox" [ngClass]="{'on': outletDetails.isOpen}" role="switch" name="toggle"
+                    (click)="createDeleteHolidaySlot()">
+            </div>
+            <div class="parent-child" *ngIf="outletDetails.parentOrChild === 'parent'">
+                <span class="d-flex align-items-center">
+                    <span>Outlets</span>
+                    <mat-icon class="cursor-enabled" [matMenuTriggerFor]="parentChild">keyboard_arrow_down</mat-icon>
+                </span>
+                <p class="m-0">
+                    <span class="online-count">{{onlineOutletsCount}} Opened</span> | <span class="offline-count">{{offlineOutletsCount}} Closed</span>
+                </p>
+            </div>
+            <div class="right-menu">
+                <!-- <button mat-button class="buttons upgrade-button" (click)="navigateToSubscriptionPage()"
+                    *ngIf="currentSubscription && userRole === 'owner'">Upgrade Plan</button> -->
+                <figure class="m-0 position-relative cursor-enabled" [matMenuTriggerFor]="menu"
+                    (click)="showTotalNotificationRecords = false; reloadNotificationsData()">
+                    <img src="assets/icons/notification-icon.svg" alt="notification icon">
+                    <span class="notification-badge" *ngIf="totalNotificationRecords && showTotalNotificationRecords">
+                        <strong>{{totalNotificationRecords > 9 ? '9+' : totalNotificationRecords}}</strong>
+                    </span>
+                </figure>
+                <div class="d-flex">
+                    <div class="d-flex align-items-center cursor-enabled" [matMenuTriggerFor]="userProfileDropDown">
+                        <img class="rounded-circle" height="40" width="40"
+                        src="{{outletDetails['outletPrimaryImage']['url']}}" alt="profile-icon">
+                    <mat-icon>keyboard_arrow_down</mat-icon>
+                    </div>
+                            <mat-menu #userProfileDropDown="matMenu" class="mt-4">
+                                    <div class="text-start">
+                                        <div class="d-flex justify-content-start p-2 gap-2 align-items-center">
+                                            <img class="rounded-circle" height="40" width="40"
+                                                src="{{outletDetails['outletPrimaryImage']['url']}}" alt="profile-icon">
+                                            <h5 class="fw-bold text-wrap mb-0">{{outletDetails.name}}</h5>
+                                        </div>
+                                        <hr class="m-0">
+                                        <div class="d-flex align-items-center p-2 cursor-enabled gap-3 dropdown-items mt-2"
+                                            *ngFor="let link of profileDropdownLinks;let i = index" [routerLink]="[link.route]">
+                                            <img [src]="link.icon" alt="">
+                                            <a class="ms-2 text-capitalize text-decoration-none text-dark fw-bold">{{link.name}}</a>
+                                        </div>
+                                        <hr class="m-0">
+                                        <div class="d-flex align-items-center p-2 cursor-enabled gap-3 dropdown-items mt-2" (click)="logout()">
+                                            <mat-icon>power_settings_new</mat-icon>
+                                            <a class="ms-2 text-decoration-none text-dark fw-bold">Logout</a>
+                                        </div>
+                                    </div>
+                            </mat-menu>
+                </div>
+
+            </div>
+            <mat-menu #menu="matMenu" xPosition="before">
+                <div class="notification-card cursor-enabled mt-2"
+                    *ngFor="let notification of notificationList;let i=index"
+                    (click)="openOrderDetailsModal(notification)">
+                    <p class="notification-title d-flex justify-content-between align-items-center m-0">
+                        <span>
+                            <span><b>{{notification.title}}</b></span>
+                            <span class="notification-time ms-2">{{notification.createdAt}}</span>
+                        </span>
+                        <span class="cursor-enabled notification-status"
+                            matTooltip="{{notification.markAsRead ? 'Mark as unread' : 'Mark as read'}}"
+                            matTooltipClass="custom-tooltip"
+                            [ngClass]="{'notification-status--unread': !notification.markAsRead}"
+                            (click)="changePushNotificationReadStatus(notification);$event.stopPropagation()"></span>
+                    </p>
+                    <span class="notification-body">{{notification.body}}</span>
+                    <hr *ngIf="notificationList.length !== i+1">
+                </div>
+                <div class="notification-load-more mt-3 text-center cursor-enabled"
+                    (click)="loadMoreNotificationsData();$event.stopPropagation()"
+                    *ngIf="totalNotificationRecords > notificationList.length">Load More</div>
+                <div *ngIf="!notificationList.length">No new notifications</div>
+            </mat-menu>
+        </header>
+        <ng-container *ngIf="outletDetails.parentOrChild === 'parent' && !isOnOrdersPage" [ngTemplateOutlet]="changeOutlet"></ng-container>
+        <ng-container *ngIf="outletDetails.parentOrChild !== 'parent' && !outletDetails.isOpen && isOnOrdersPage && currentSubscription" 
+            [ngTemplateOutlet]="offline"></ng-container>
+        <ng-container *ngIf="outletDetails.parentOrChild !== 'parent' && isOnOrdersPage && !currentSubscription" 
+            [ngTemplateOutlet]="noSubscription"></ng-container>
+        <router-outlet></router-outlet>
+    </section>
+</div>
+<!-- Order details modal -->
+<app-order-details-dialog *ngIf="showOrderDetailsModal"></app-order-details-dialog>
+<app-inquiry-order-details-dialog *ngIf="showInquiryOrderDetailModal"></app-inquiry-order-details-dialog>
+
+
+<mat-menu #parentChild="matMenu" class="parent-child-matmenu" xPosition="after">
+    <div class="d-flex justify-content-between align-items-center gap-3 py-2" [ngClass]="{'border-bottom': parentAndChildOutlets.length !== i+1}" 
+        *ngFor="let outlet of parentAndChildOutlets; let i=index" (click)="$event.stopPropagation()">
+        <span class="">{{outlet.name}}</span>
+        <span class="d-flex gap-2 text-end">
+            <span class="parent-outlet-tag" *ngIf="outlet.parentOrChild === 'parent'">Parent</span>
+            <img class="cursor-enabled" src="assets/icons/view-icon.svg" alt="" matTooltip="View Status" matTooltipClass="custom-tooltip" 
+                (click)="viewOutletStatus(outlet);$event.stopPropagation()" *ngIf="!outlet.isOpen">
+            <input type="checkbox" [ngClass]="{'on': outlet.isOpen}" role="switch" name="toggle"
+            (click)="createDeleteHolidaySlot(outlet);$event.stopPropagation()">
+        </span>
+    </div>
+</mat-menu>
+
+<mat-menu #outletsDropdown="matMenu">
+    <div class="outlets-dropdown d-flex justify-content-between align-items-center gap-3 py-2" [ngClass]="{'border-bottom': parentAndChildOutlets.length !== i+1}" 
+        *ngFor="let outlet of parentAndChildOutlets; let i=index">
+        <span class="">{{outlet.name}}</span>
+        <span class="parent-outlet-tag" *ngIf="outlet.parentOrChild === 'parent'">Parent</span>
+        <button class="buttons buttons--green" *ngIf="outlet.id === selectedOutlet.id">Active</button>
+        <button  class="buttons buttons--grey" *ngIf="outlet.id !== selectedOutlet.id" (click)="onOutletSelection(outlet)">View</button>
+    </div>
+</mat-menu>
+
+<ng-template #changeOutlet>
+    <section class="sub-header d-flex align-items-center">
+        <span class="fs-14">You are viewing the details of <strong class="outlet-name"> {{selectedOutlet.name}}</strong></span> 
+        <span class="cursor-enabled ms-2" [matMenuTriggerFor]="outletsDropdown"><strong>Change Outlet</strong></span>
+        <mat-icon class="cursor-enabled" [matMenuTriggerFor]="outletsDropdown">keyboard_arrow_down</mat-icon>
+    </section>
+</ng-template>
+
+<ng-template #offline>
+    <section class="sub-header" *ngIf="currentSubscription">
+        <span class="fs-14" *ngIf="outletDetails.isInHolidaySlot && outletDetails.holidaySlotCreatedBy === 'vendor'">
+            Holiday slot will end {{showOutletOpeningTimer ? 'in' : 'on'}} 
+            <strong >{{showOutletOpeningTimer ? outletOpeningTimer : (outletDetails.nextOpensAt | date: 'd MMM y, h:mm a') }}.</strong>
+            Turn on the toggle to start receiving orders.
+        </span>
+        <span class="fs-14" *ngIf="outletDetails.isInHolidaySlot && outletDetails.holidaySlotCreatedBy === 'admin'">
+            Outlet is currently in Holiday slot by Admin. Will end {{showOutletOpeningTimer ? 'in' : 'on'}}
+            <strong>{{showOutletOpeningTimer ? outletOpeningTimer : (outletDetails.nextOpensAt | date: 'd MMM y, h:mm a') }}</strong>
+        </span>
+        <span class="fs-14" *ngIf="!outletDetails.isInHolidaySlot && !outletDetails.isOpen">
+            Your Outlet is currently closed for business. Will open {{showOutletOpeningTimer ? 'in' : 'on'}} 
+            <strong>{{showOutletOpeningTimer ? outletOpeningTimer : (outletDetails.nextOpensAt | date: 'd MMM y, h:mm a') }}</strong>
+        </span>
+    </section>
+</ng-template>
+
+<ng-template #noSubscription>
+    <section class="sub-header" *ngIf="!currentSubscription">
+        <span class="fs-14 me-3">
+            {{ userRole === 'owner' 
+                ? "You're Missing out on all advanced features, Get the subscription and enjoy all the benefits." 
+                : "You're Missing out on all advanced features, Contact your owner and get the subscription." }}
+        </span>
+        <button mat-button class="buttons active-button" *ngIf="userRole === 'owner'" (click)="navigateToSubscriptionPage()">Subscribe</button>
+    </section>
+</ng-template>

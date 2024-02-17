@@ -1,0 +1,158 @@
+<div id="kot-invoice">
+  <div class="text-bold">
+    <div class="d-flex flex-column align-items-center">
+      <span class="text-bold fs-18">KOT</span>
+      <span>{{orderDetails.orderPlacedTime | date: 'dd/MM/YYYY HH:mm'}}</span>
+      <span>Speedyy: #{{orderDetails.orderId}}</span>
+      <span class="text-bold">Delivery</span>
+    </div>
+    <ng-container>
+      <div class="row border-bottom border-secondary pb-2">
+        <span class="col-1">No.</span>
+        <span class="col-7">Item</span>
+        <span class="col-3">Qty.</span>
+      </div>
+      <div class="row" *ngFor="let orderItem of orderDetails.orderItems; let srNo=index">
+        <span class="col-1">{{srNo + 1}}</span>
+        <span class="col-7 text-bold">
+          {{orderItem.orderItemName}}
+          <ng-container *ngIf="orderItem.orderVariants.length">
+            (<label *ngFor="let orderVariant of orderItem.orderVariants; let i=index">
+              {{orderVariant.orderVaraintName}}<span *ngIf="orderItem.orderVariants.length !== i+1">,&nbsp;</span>
+            </label>)
+          </ng-container>
+          <p class="m-0" *ngIf="orderItem.orderAddons.length">
+              Addons: 
+              <ng-container *ngFor="let orderAddon of orderItem.orderAddons; let j=index">
+                {{orderAddon.orderAddonName}}<span *ngIf="orderItem.orderAddons.length !== j+1">,&nbsp;</span>
+              </ng-container>
+          </p>
+        </span>
+        <span class="col-3">&nbsp;{{orderItem.orderItemQuantity}}</span>
+      </div>
+    </ng-container>
+    <div class="custom-border mb-3">
+      <span>Special Note: {{orderDetails.anySpecialRequest ? orderDetails.anySpecialRequest : '---'}}</span>
+    </div>
+    <div>
+      <span class="text-bold">Payment Status: </span>
+      <span>{{orderDetails.isPod ? 'Pay on Delivery' : 'Online Paid'}}</span> 
+    </div>
+    <div class="cart-details" *ngIf="orderDetails.couponDetails">
+      <span class="text-bold">Reward Type: </span>
+      <span>{{orderDetails.couponDetails.couponCode}}</span>
+    </div>
+  </div>
+</div>
+
+<div id="bill">
+    <span class="centered">
+        <p class="text-bold">Order Id: {{orderDetails.orderId}}</p>
+        <p class="text-bold">{{outletName}}</p>
+        <p>{{outletAddress}}</p>
+    </span>
+    <div class="centered text-bold">
+        {{orderDetails.orderPlacedTime | date: 'd MMM yyyy, hh:mm:ss a'}}
+    </div>
+    <div class="centered text-bold">
+       {{orderDetails.paymentStatus === 'completed' ? 'PAID' : 'PAYMENT PENDING' }}
+    </div>
+    <span>
+        <label class="text-bold">Name: {{orderDetails.customerDetails.name}}</label>
+        <br>
+        <label class="text-bold">Address: {{orderDetails.customerDetails.addressLine1}}&nbsp; {{orderDetails.customerDetails.addressLine2}}</label>
+    </span>
+    <label class="text-bold">Items</label>
+    <table *ngFor="let orderItem of orderDetails.orderItems">
+        <tr>
+            <td class="description text-bold">
+                {{orderItem.orderItemQuantity}} x {{orderItem.orderItemName}}
+            </td>
+            <td class="price">
+                <span>{{orderItem.orderItemFinalPrice}}</span>
+            </td>
+        </tr>
+        <tr *ngFor="let orderVariant of orderItem.orderVariants; let i=index">
+            <td class="description">
+                {{orderVariant.orderVaraintName}}               
+            </td>
+            <td *ngIf="orderItem.orderVariants.length !== i+1 || orderItem.orderAddons.length">
+            </td>
+        </tr>
+        <tr *ngFor="let orderAddon of orderItem.orderAddons; let j=index">
+            <td class="description">
+                {{orderAddon.orderAddonName}}               
+            </td>
+            <td *ngIf="orderItem.orderAddons.length !== j+1">
+            </td>
+        </tr>
+    </table>
+    <label class="text-bold">Billing Summary</label>
+                    <ng-container [ngTemplateOutlet]="orderDetails.invoiceDetails.version === '0.0.1' ? invoiceV1 : invoiceV2"></ng-container>
+
+    <div class="special-request mt-1" *ngIf="orderDetails.anySpecialRequest">
+        <label class="text-bold">Special Request: </label>
+        <span>{{orderDetails.anySpecialRequest}}</span>
+    </div>
+    <label class="text-bold mt-1">Thank you for choosing Speedyy :)</label>
+
+</div>
+<!-- Invoice -->
+<ng-template #invoiceV1>
+<table>
+    <tr>
+      <td class="description text-bold">Total</td>
+      <td class="price">{{orderDetails.invoiceDetails.totalItemCost}}</td>
+    </tr>
+    <tr>
+      <td class="description text-bold">Packing Charges</td>
+      <td class="price">{{orderDetails.invoiceDetails.totalPackingCharges}}</td>
+    </tr>
+    <tr>
+      <td class="description text-bold">Taxes</td>
+      <td class="price">{{orderDetails.invoiceDetails.totalTax}}</td>
+    </tr>
+    <tr *ngIf="orderDetails.couponDetails">
+      <td class="description text-bold">Discounts</td>
+      <td class="price">{{orderDetails.couponDetails.vendorDiscountShareAmount}}</td>
+    </tr>
+    <tr>
+      <td class="description text-bold">Bill Total</td>
+      <td class="price">{{orderDetails.invoiceDetails.vendorPayoutAmount}}</td>
+    </tr>
+  </table>
+  </ng-template>
+  
+<ng-template #invoiceV2>
+  <table>
+    <tr>
+      <td class="description text-bold">Total</td>
+      <td class="price">{{orderDetails.invoiceDetails.totalItemCost}}</td>
+    </tr>
+    <tr>
+      <td class="description text-bold">Packaging Charges</td>
+      <td class="price">{{orderDetails.invoiceDetails.totalPackingCharges}}</td>
+    </tr>
+    <tr *ngIf="service === Services.Paan">
+      <td class="description text-bold">Platform Fees for Customer</td>
+      <td class="price">{{orderDetails.invoiceDetails.speedyyChargesForCustomer}}</td>
+    </tr>
+    <tr>
+      <td class="description text-bold">Taxes</td>
+      <td class="price">{{orderDetails.invoiceDetails.totalTax}}</td>
+    </tr>
+    <tr *ngIf="orderDetails.invoiceDetails.deliveryChargesPaidBy === 'customer'">
+      <td class="description text-bold">Delivery Charges</td>
+      <td class="price">{{orderDetails.invoiceDetails.deliveryCharges}}</td>
+    </tr>
+    <tr *ngIf="orderDetails.couponDetails">
+      <td class="description text-bold">Discounts</td>
+      <td class="price">{{orderDetails.couponDetails.discountAmount}}</td>
+    </tr>
+    <tr>
+      <td class="description text-bold">Bill Total</td>
+      <td class="price">{{orderDetails.invoiceDetails.totalCustomerPayable}}</td>
+    </tr>
+  </table>
+</ng-template>
+  

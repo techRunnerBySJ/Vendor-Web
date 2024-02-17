@@ -1,0 +1,111 @@
+<div class="subscription-plans-container">
+    <div class="wrapper d-flex gap-3 flex-wrap">
+        <div class="plans d-flex flex-column mt-4" *ngFor="let plan of subscriptionPlansList" [ngClass]="{'active-plan':plan.id === currentSubscription?.planId}">
+            <span class="subscription-status status d-flex justify-content-start" *ngIf="plan.id === currentSubscription?.planId" [ngClass]="{'subscription-status--green': currentSubscription?.status === subscriptionStatusList.active,
+                    'subscription-status--orange': [subscriptionStatusList.initialized, subscriptionStatusList.bank_approval_pending].includes(currentSubscription?.status),
+                    'subscription-status--red':currentSubscription?.status === subscriptionStatusList.on_hold}">{{currentSubscription?.status}}</span>
+            <div class="plan-category text-center">
+                {{plan.type}}</div>
+            <div class="text-center mt-1">
+                <strong>
+                    &#8377; {{plan.amount}} {{plan.type === planType.free ? 'for 3' : ' / per'}} {{plan.intervalType}}
+                </strong>
+            </div>
+            <div class="d-flex justify-content-center w-100">
+                <label class="plan-details text-center">
+                    {{plan.name}} </label>
+            </div>
+
+            <ul>
+
+                <li>
+                    <strong>
+                        {{plan.description}}
+                    </strong>
+                </li>
+                <li>
+                    <strong>
+                        {{plan.ordersCount ? plan.ordersCount : "0"}} Orders
+                    </strong>
+                </li>
+            </ul>
+
+            <a class="terms-conditions text-warning" href="https://www.speedyy.com/terms-conditions/" target="_blank"><b>*Terms & Conditions</b></a>
+            <a class="text-dark text-decoration-underline cursor-enabled text-center" (click)="retryPayment()" *ngIf="(currentSubscription?.status === subscriptionStatusList.on_hold) && (plan.id === currentSubscription?.planId)"><strong>Retry
+                    Payment</strong></a>
+
+            <button class="buttons active-button w-100 mt-4" mat-button (click)="openSubscriptionModal(plan)" *ngIf="plan.id !== currentSubscription?.planId">Subscribe
+            </button>
+            <button class="buttons w-100 mt-3 mt-auto" mat-button (click)="cancelSubscription(plan)" *ngIf="plan.id === currentSubscription?.planId && plan.type === planType.periodic">Cancel Your Plan
+            </button>
+        </div>
+
+        <!--Static Plan-->
+        <div class="plans d-flex flex-column mt-4">
+            <div class="plan-category text-center">
+                Paid</div>
+            <div class="d-flex justify-content-center w-100">
+                <label class="plan-details text-center">
+                    Paid Permium Plan</label>
+            </div>
+
+            <ul>
+                <li class="coming-soon mt-5 d-flex justify-content-center">
+                    <strong>
+                        Coming soon
+                    </strong>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+<!-- Subscription Modal -->
+<div class="modal hide drawer right-align" id="SubscriptionModal" role="dialog" aria-labelledby="SubscriptionModal" aria-hidden="true" *ngIf="showSubscriptionModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label class="modal-title border-0" id="exampleModalLabel">Subscription</label>
+                <mat-icon (click)="closeSubscriptionModal()" data-dismiss="modal">close</mat-icon>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="subscriptionForm">
+                    <div class="input-details">
+                        <label class="input-heading">Plan Name</label>
+                        <mat-form-field appearance="outline">
+                            <input type="text" matInput formControlName="planName" placeholder="Enter name" />
+                        </mat-form-field>
+                        <app-form-error-msg [control]="subscriptionForm.controls.planName"></app-form-error-msg>
+                    </div>
+                    <div class="input-details">
+                        <label class="input-heading">Name</label>
+                        <mat-form-field appearance="outline">
+                            <input type="text" matInput formControlName="customerName" placeholder="Enter name" />
+                        </mat-form-field>
+                        <app-form-error-msg [control]="subscriptionForm.controls.customerName"></app-form-error-msg>
+                    </div>
+                    <div class="input-details">
+                        <label class="input-heading">Phone</label>
+                        <mat-form-field appearance="outline">
+                            <input type="text" matInput formControlName="customerPhone" placeholder="Enter Phone" />
+                        </mat-form-field>
+                        <app-form-error-msg [control]="subscriptionForm.controls.customerPhone"></app-form-error-msg>
+                    </div>
+                    <div class="input-details">
+                        <label class="input-heading">Email</label>
+                        <mat-form-field appearance="outline">
+                            <input type="text" matInput formControlName="customerEmail" placeholder="Enter Email" />
+                        </mat-form-field>
+                        <app-form-error-msg [control]="subscriptionForm.controls.customerEmail"></app-form-error-msg>
+                    </div>
+                    <div class="d-flex">
+                        <button type="button" mat-button class="buttons w-100 h-3 me-3" (click)="closeSubscriptionModal()">Dismiss
+                        </button>
+                        <button type="button" mat-button class="buttons active-button w-100 h-3" (click)="createSubscription()">Subscribe</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

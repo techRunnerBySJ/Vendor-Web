@@ -1,0 +1,15 @@
+<section class="dialog-wrapper">
+    <figure>
+        <img *ngIf="type === 'success'" src="assets/icons/green-tick-icon.svg" width="50" height="50" alt="success icon">
+        <img *ngIf="type === 'failure'" src="assets/icons/red-cross-icon.svg" width="50" height="50" alt="failure icon">
+    </figure>
+    <div class="message">
+        {{message}}
+    </div>
+    <div *ngIf="showStatus" class="status mb-4">
+        <span class="status__heading">status</span>
+        <span class="status__text"> <img class="align-sub" width="20" height="20" src="assets/icons/exclamation-icon.svg" alt=""> pending</span>
+    </div>
+    <button *ngIf="showStatus" class="buttons active-button h-3 w-100" mat-button (click)="onSubmit()">{{buttonText}}</button>
+    <button class="buttons h-3 w-100" [ngClass]="showStatus? 'buttons--white': 'active-button'"  mat-button (click)="onDismiss()">dismiss</button>
+</section>

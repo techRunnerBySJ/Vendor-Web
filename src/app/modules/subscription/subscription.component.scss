@@ -1,0 +1,42 @@
+.subscription-wrapper {
+    padding: 0 4.5em;
+    @media only screen and (min-device-width: 1025px) and (max-device-width: 1500px) {
+        padding: 0 1.5rem;
+    }
+    &__content {
+        background-color: #fff;
+        border-radius: 12px;
+        padding: 1.25em;
+        .nav-links {
+            color: #6d7e8b;
+            margin-right: 2em;
+            text-decoration: none;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .active-nav-link {
+            color: #000;
+        }
+    }
+}
+
+// Common css for table in history and payment
+table {
+    width: 100%;
+    thead {
+        border-top: 1px solid #e7ecef;
+        border-bottom: 1px solid #e7ecef;
+        th {
+            color: #6d7e8b;
+            padding: 1em;
+        }
+    }
+    tbody {
+        tr {
+            border-bottom: 1px solid #e7ecef;
+            td {
+                padding: 1.5em 1em;
+            }
+        }
+    }
+}

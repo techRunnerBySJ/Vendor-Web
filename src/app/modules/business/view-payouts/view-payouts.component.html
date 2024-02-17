@@ -1,0 +1,229 @@
+<div class="payouts-wrapper w-100">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>
+            <img class="align-center me-2 clickable" src="assets/icons/back-icon.svg" width="16" height="16"
+                (click)="navigateToBusinessPage()">
+            <b>Payouts</b>
+        </h2>
+        <span class="warning-msg" *ngIf="showWarningMsg"><mat-icon class="me-3">warning</mat-icon> Kindly create primary
+            account to start receiving payments.</span>
+    </div>
+
+    <section class="past-payouts-section">
+        <h5><b>past payouts</b></h5>
+        <div class="row align-items-center mb-3">
+            <ng-select class="col-2" [items]="months" bindValue="id"
+            bindLabel="name" placeholder="Select month" [(ngModel)]="selectedMonth"></ng-select>
+            <ng-select class="col-2" [items]="years" bindValue="id"
+            bindLabel="name" placeholder="Select year" [(ngModel)]="selectedYear"></ng-select>
+            <button class="buttons active-button col-2" mat-button
+                (click)="getMonthwisePayouts()">Download Payouts</button>
+        </div>
+        <div class="row align-items-center w-100">
+            <div class="col-4">
+                <ng-select [multiple]="true" [closeOnSelect]="false" [items]="payoutStatus | keyvalue" bindValue="key"
+                    bindLabel="value" placeholder="Select Statuses" [(ngModel)]="statuses"
+                    (clear)="clearFilter('')"></ng-select>
+            </div>
+            <!-- <div class="col-2">    
+    <ng-select id="area" name="discountType" formControlName="discountType" [items]="discountTypeOptions" placeholder="Select Range" bindValue="id" bindLabel="name" (change)="onDiscountTypeSelection()">
+</ng-select>
+</div> -->
+            <div class="col-4">
+                <mat-form-field class="custom-mat-form-field" appearance="outline">
+                    <input matInput (click)="startDate.open()" [matDatepicker]="startDate" [max]="maxDate"
+                        [readonly]="true" name="startDate" placeholder="Select Start date" [(ngModel)]="fromDate"
+                        ngDefaultControl>
+                    <mat-datepicker-toggle matSuffix [for]="startDate" matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #startDate></mat-datepicker>
+                    <button mat-icon-button matSuffix *ngIf="fromDate" (click)="clearFilter('fromDate')">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+            <div class="col-4">
+                <mat-form-field class="custom-mat-form-field" appearance="outline">
+                    <input matInput (click)="endDate.open()" [matDatepicker]="endDate" [max]="maxDate" [readonly]="true"
+                        name="endDate" placeholder="Select End date" [min]="fromDate" [(ngModel)]="toDate"
+                        ngDefaultControl>
+                    <mat-datepicker-toggle matSuffix [for]="endDate" matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #endDate></mat-datepicker>
+                    <button mat-icon-button matSuffix *ngIf="toDate" (click)="clearFilter('toDate')">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row w-100 align-items-center mt-2">
+            <!-- <span class="col-2">
+                        <label class="input-heading">Enter Amount Range</label> 
+                    </span> -->
+            <span class="col-6 d-flex align-items-center gap-1">
+                <mat-form-field appearance="outline">
+                    <input type="text" matInput name="greaterThanAmount" [(ngModel)]="greaterThanAmount"
+                        placeholder="Enter Minimum Amount">
+                </mat-form-field>
+                <label class="input-heading d-flex justify-content-center">-</label>
+                <mat-form-field appearance="outline">
+                    <input type="text" matInput name="lessThanAmount" [(ngModel)]="lessThanAmount"
+                        placeholder="Enter Maximum Amount">
+                </mat-form-field>
+            </span>
+            <button class="buttons active-button col-2" mat-button
+                (click)="currentPage = 1;getPayoutsData(true)">apply</button>
+            <button class="buttons col-2 ms-2" mat-button (click)="clearFilter('')">clear</button>
+            <!-- <div class="col-4">
+                <button class="buttons" mat-button (click)="resetFilterControls()">clear</button>
+            </div> -->
+        </div>
+        <div class="d-flex justify-content-between" *ngIf="payoutsList.length; else noDataFound">
+            <div class="past-payouts-list">
+                <div class="past-payout-card d-flex justify-content-between align-items-baseline cursor-enabled"
+                    [ngClass]="{'past-payout-card--active': selectedIndex === i}"
+                    *ngFor="let payout of payoutsList| paginate: {itemsPerPage: 4,  currentPage: currentPage,totalItems: totalPayouts };let i=index"
+                    (click)="currentPayoutDetails = payout;selectedIndex = i">
+                    <ul>
+                        <li class="txn-amount"><b>&#8377; {{payout.amountPaidToVendor}}</b> </li>
+                        <li>{{payout.startDate | date: 'd MMM, y'}} - {{payout.endDate | date: 'd MMM, y'}}</li>
+                        <li class="txn-date" *ngIf="payout.payoutCompletedTime">on {{payout.payoutCompletedTime | date:
+                            'd MMM, y'}}</li>
+                    </ul>
+                    <ul class="pull-right">
+                        <li class="status" [ngClass]="{'status--green': greenStatusArray.includes(payout.payoutStatus),
+                            'status--orange': orangeStatusArray.includes(payout.payoutStatus),
+                            'status--red': redStatusArray.includes(payout.payoutStatus)}">
+                            <img class="align-text-top me-1" src="assets/icons/green-tick-icon.svg" alt="paid icon"
+                                *ngIf="greenStatusArray.includes(payout.payoutStatus)">
+                            <img width="16" height="16" class="align-text-top me-1"
+                                src="assets/icons/exclamation-icon.svg" alt="pending icon"
+                                *ngIf="orangeStatusArray.includes(payout.payoutStatus)">
+                            <img width="16" height="16" class="align-text-top me-1"
+                                src="assets/icons/red-cross-icon.svg" alt="cancel icon"
+                                *ngIf="redStatusArray.includes(payout.payoutStatus)"> {{payout.payoutStatus}}
+                        </li>
+                        <li>&nbsp;</li>
+                        <mat-icon>keyboard_arrow_right</mat-icon>
+                    </ul>
+                </div>
+                <pagination-controls
+                    (pageChange)="currentPage = $event;getPayoutsData();currentPayoutDetails = null"></pagination-controls>
+            </div>
+            <div class="past-payout-details w-50" *ngIf="currentPayoutDetails">
+                <button class="cursor-enabled buttonsbuttons active-button align-self-end mb-3" mat-button (click)="generatePdf()">
+                    <img class="me-2" src="assets/icons/download-icon.svg" alt="download icon"> DOWNLOAD AS PDF
+                </button>
+                <header class="header d-flex justify-content-between ">
+                    <label class="total-orders d-flex justify-content-between align-items-center">Details
+                        <span>{{currentPayoutDetails.payoutOrders.length}} orders</span></label>
+                    <label class="total-amount"> &#8377; {{currentPayoutDetails.amountPaidToVendor}}</label>
+                </header>
+                <table class="w-100">
+                    <tr>
+                        <td class="colspan-2">total order amount</td>
+                        <td class="pull-right">&#8377; {{currentPayoutDetails.totalOrderAmount}}</td>
+                    </tr>
+                    <tr>
+                        <td class="colspan-2">transaction charges</td>
+                        <td class="pull-right">- &#8377; {{currentPayoutDetails.txnCharges}}</td>
+                    </tr>
+                    <tr>
+                        <td class="colspan-2">total transaction amount</td>
+                        <td class="pull-right"><b> &#8377; {{currentPayoutDetails.amountPaidToVendor}}</b></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </section>
+
+    <h2 class="mt-5"><b>Payout Settings</b></h2>
+    <section class="payout-settings">
+        <header class="header d-flex justify-content-between align-items-center">
+            <span><b>bank accounts details</b></span>
+            <span class="header__link text-uppercase" (click)="toggleAddNewAccountModal()"><b>add new</b></span>
+        </header>
+        <div class="bank-accout-card align-items-center" *ngFor="let bankAccount of bankAccountsList">
+            <img height="50" width="50" src="assets/bank-card.png">
+            <div class="bank-account-details ">
+                <p>{{bankAccount.bankName}}</p>
+                <span>{{displayAccountNumber(bankAccount.accountNumber)}}</span>
+            </div>
+            <div class="payout-status--pending text-uppercase" *ngIf="!bankAccount.isIfscVerified">
+                <img class="align-text-top me-1" width="16" height="16" src="assets/icons/exclamation-icon.svg"
+                    alt="exclamation icon"> verify ifsc
+            </div>
+            <div class="primary-account text-uppercase" *ngIf="bankAccount.isPrimary"><span>primary</span></div>
+            <mat-icon class="clickable" mat-icon-button [matMenuTriggerFor]="menu">more_vert</mat-icon>
+            <mat-menu #menu="matMenu">
+                <table>
+                    <tr class="cursor-enabled" (click)="verifyIfscCode(bankAccount)"
+                        *ngIf="!bankAccount.isIfscVerified">
+                        <td><b>Verify IFSC Code</b></td>
+                    </tr>
+                    <tr class="cursor-enabled" (click)="makePrimaryBankAccount(bankAccount)"
+                        *ngIf="bankAccount.isIfscVerified && !bankAccount.isPrimary">
+                        <td><b>Make Primary</b></td>
+                    </tr>
+                    <tr class="cursor-enabled" (click)="removeAccount(bankAccount)">
+                        <td><b>Remove Account &nbsp;</b></td>
+                        <td><img height="18" width="18" src="assets/icons/delete.svg" alt="delete-icon"></td>
+                    </tr>
+                </table>
+            </mat-menu>
+        </div>
+    </section>
+</div>
+
+<!-- Add new Account Modal -->
+<div class="modal hide drawer right-align" id="orderDetailsModalRight" role="dialog"
+    aria-labelledby="orderDetailsModalLabel" aria-hidden="true" *ngIf="showAddNewAccountModal">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label class="modal-title border-0" id="exampleModalLabel">Add Account</label>
+                <mat-icon (click)="toggleAddNewAccountModal()" data-dismiss="modal">close</mat-icon>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="bankAccountForm">
+                    <div class="input-details">
+                        <label class="input-heading">Beneficiary Name</label>
+                        <mat-form-field appearance="outline">
+                            <input type="text" matInput name="name" formControlName="beneficiaryName"
+                                placeholder="Enter Name">
+                        </mat-form-field>
+                        <app-form-error-msg [control]="bankAccountForm.controls.beneficiaryName"></app-form-error-msg>
+                    </div>
+                    <div class="input-details">
+                        <label class="input-heading">Account Number</label>
+                        <mat-form-field appearance="outline">
+                            <input type="text" matInput name="accountNumber" formControlName="accountNumber"
+                                placeholder="Enter Account Number">
+                        </mat-form-field>
+                        <app-form-error-msg [control]="bankAccountForm.controls.accountNumber"></app-form-error-msg>
+                    </div>
+                    <div class="input-details">
+                        <label class="input-heading">Ifsc Code</label>
+                        <mat-form-field appearance="outline">
+                            <input type="text" matInput name="ifscCode" formControlName="ifscCode"
+                                oninput="this.value = this.value.toUpperCase()" placeholder="Enter IFSC Code">
+                        </mat-form-field>
+                        <app-form-error-msg [control]="bankAccountForm.controls.ifscCode"></app-form-error-msg>
+                    </div>
+                </form>
+                <div class="d-flex">
+                    <button class="buttons w-100 h-3 me-3" mat-button
+                        (click)="toggleAddNewAccountModal()">dismiss</button>
+                    <button class="buttons active-button w-100 h-3" mat-button
+                        (click)="addBankAccount()">submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #noDataFound>
+    <section class="d-flex flex-column justify-content-center align-items-center mt-5">
+        <img width="131" height="131" src="assets/icons/page404.svg">
+        <h3>Umm...no data found!</h3>
+    </section>
+</ng-template>

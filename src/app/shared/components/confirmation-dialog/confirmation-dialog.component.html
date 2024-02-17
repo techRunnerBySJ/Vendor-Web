@@ -1,0 +1,10 @@
+<section class="dialog-wrapper">
+    <div *ngIf="alert">
+        <img src="assets/icons/green-tick-icon.svg" width="50" height="50"><br><br>
+    </div>
+    <div class="message">
+        {{message}}
+    </div>
+    <button class="buttons active-button h-3 w-100 mb-2" mat-button (click) = "onConfirm()"> {{confirmBtnText}}</button>
+    <button *ngIf="!alert" class="buttons buttons--white w-100" mat-button (click) = "onDismiss()">{{dismissBtnText}}</button>
+</section>

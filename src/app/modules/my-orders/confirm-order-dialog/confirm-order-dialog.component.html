@@ -1,0 +1,36 @@
+<section class="dialog-wrapper">
+    <div class="text-center" *ngIf="orderAction === 'accept'">
+        <h4><b>How much time will it take to prepare the order?</b></h4>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <img src="assets/icons/substract-icon.svg" alt="substract icon" (click)="editPreparationTime('decrease')"  [ngClass]="{'grey-out': preparationTime === 5}">
+            <label class="time d-flex flex-column">
+                <span><b>{{preparationTime}}</b></span>
+                <span>Mins</span>
+            </label>
+            <img src="assets/icons/addition-icon.svg" alt="addition icon" (click)="editPreparationTime('increase')" [ngClass]="{'grey-out': preparationTime >= maxDefaultPrepTime + 10 || preparationTime === 120}">
+        </div>
+        <div *ngIf="hasSponsoredRider">
+            <hr>
+            <h4 class="mt-3 m-0"><b>Assign Outlet's Rider ?</b></h4>
+            <div class=" align-items-center">
+                <div class="radio-btn d-flex justify-content-center ms-2">
+                    <input type="radio" [value]="true" [(ngModel)]="useSponsoredRider">
+                    <span class="me-3"><b>Yes</b></span>
+                    <input type="radio" [value]="false" [(ngModel)]="useSponsoredRider">
+                    <span class="me-3"><b>No</b></span>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex">
+                <button mat-button class="buttons me-3 mt-4 w-100 h-3" (click)="onDismiss()">cancel</button>
+                <button mat-icon class="buttons active-button mt-4 h-3 w-100" (click)="onConfirm()">confirm</button>
+        </div>
+    </div>
+    <!-- <div>
+        <label for="name" class="input-heading">Available Sponsored Rider</label>
+        <ng-select class="mt-2" [items]="sponsoredRiderName" bindValue="id" bindLabel="full_name"
+            placeholder="Search for sponsored Rider..."
+            [(ngModel)]="availableSponsoredRider"></ng-select>
+    </div> -->
+</section>

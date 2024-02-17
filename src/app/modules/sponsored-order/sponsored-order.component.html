@@ -1,0 +1,79 @@
+<div class="sponsored-order-wrapper">
+    <div class="d-flex justify-content-between">
+        <header class="sponsored-order-wrapper__header"><b>Delivery </b></header>
+        <button class="buttons active-button" mat-button (click)="navigateToNewWindow()">Open in new tab <mat-icon>open_in_new</mat-icon></button>
+    </div>
+
+    <main class="sponsored-order-wrapper__content w-100">
+        <button mat-button class="buttons me-3 mb-4" [ngClass]="{'active-button': orderStatus === 'pending'}" (click)="getSponsoredOrderData('pending')"> Pending </button>
+        <button mat-button class="buttons me-3 mb-4" [ngClass]="{'active-button': orderStatus === 'assigned'}" (click)="getSponsoredOrderData('assigned')"> Assigned </button>
+        <button mat-button class="buttons me-3 mb-4" [ngClass]="{'active-button': orderStatus === 'accepted'}" (click)="getSponsoredOrderData('accepted')"> Accepted </button>
+
+        <ng-container *ngIf="ordersList.length; else noDataFound">
+            <section class="orders-grid">
+                <div class="order-card d-flex flex-column" *ngFor="let order of ordersList | paginate: {itemsPerPage: pageSize,  currentPage: currentPage,totalItems: totalOrders };let i=index">
+                    <div class="d-flex justify-content-between align-items-center mb-3" *ngIf="orderStatus === 'pending'">
+                        <label class="timer--orange fw-700 text-uppercase">Assign Rider Timer</label>
+                        <span class="progressbar">
+                            <div [ngStyle]="{width: (order.progressbarWidth) + '%'}"
+                                [ngClass]="{'progressbar--orange': order.isTimerAlert, 'progressbar--red': order.isTimerDanger}">
+                            </div>
+                        </span>
+                        <span class="timer--green" [ngClass]="{'timer--orange': order.isTimerAlert, 'timer--red': order.isTimerDanger}">
+                            <b>{{order.timeLeft}}</b>
+                        </span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-baseline">
+                        <ul class="w-75">
+                            <li class="order-id"><b>#{{order.orderId}}</b></li>
+                            <li class="order-det"><b>{{order.createdAt | date: 'short'}}</b></li>
+                            <!-- <li class="cart d-flex">
+                                <span class="order-det">{{order.orderItems[0].orderItemQuantity}} x
+                                    {{order.orderItems[0].orderItemName}}</span>
+                                <span *ngIf="order.orderItems.length > 1"><b> + {{order.orderItems.length - 1}}
+                                        More</b></span>
+                            </li> -->
+                        </ul>
+                        <ul class="pull-right">
+                            <li>
+                                <div class="d-flex" *ngIf="orderStatus === 'pending'">
+                                    <button class="buttons button-size active-button me-2" mat-button (click)="getAvailableSponsoredRiders(order.orderId)"><mat-icon>edit</mat-icon> Assign Rider</button>
+                                    <button class="buttons me-2" mat-button (click)="surrenderSponsoredOrder(order.orderId)">Surrender Order</button>
+                                </div>
+                            </li>
+                            <li class="text-uppercase mt-2">
+                                <img src='{{"assets/icons/placed-order-status.svg"}}' alt="{{ order.clientOrderStatus }}" matTooltip="{{ order.clientOrderStatus }}" matTooltipClass="custom-tooltip" width="20" height="20">
+                                <b  class="ms-3">{{order.clientOrderStatus}}</b> 
+                            </li>
+                            <li>
+                                <div class="d-flex flex-column" *ngIf="orderStatus === 'accepted'">
+                                    <mat-form-field appearance="outline">
+                                        <input class="w-100" matInput type="text" name="removeReason" [(ngModel)]="removeRiderReason"  placeholder="Enter reason for removing">
+                                    </mat-form-field>
+                                    <span class="d-flex justify-content-end">
+                                        <button class="buttons active-button ms-3 mt-2" mat-button (click)="removeRider(order.orderId)">Remove Rider</button>
+                                    </span>
+                                </div>
+                            </li>
+                            <li>&nbsp;</li>
+                            <!-- <li class="text-uppercase mt-2">
+                                <span class="d-flex align-items-center justify-content-end">
+                                    <img  src='../../../../../assets/icons/rider-icon.svg' alt="{{ order.deliveryStatus }}" matTooltip="{{ order.deliveryStatus }}" matTooltipClass="custom-tooltip" width="30" height="30"> 
+                                    <b class="ms-3">{{order.deliveryStatus}}</b>     
+                                </span>
+                            </li> -->
+                            <!-- <mat-icon (click)="openOrderDetailsModal(order.orderId)">keyboard_arrow_right</mat-icon>    -->
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <pagination-controls style="grid-column: 2;" (pageChange)="currentPage = $event;getSponsoredOrderData()"></pagination-controls>
+        </ng-container>
+        <ng-template #noDataFound>
+            <section class="d-flex flex-column justify-content-center align-items-center mt-5">
+                <img width="131" height="131" src="../../../../assets/icons/page404.svg">
+                <h3>Umm...no data found!</h3>
+            </section>
+        </ng-template>
+    </main>
+</div>

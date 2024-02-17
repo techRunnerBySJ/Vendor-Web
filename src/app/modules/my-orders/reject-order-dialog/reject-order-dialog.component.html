@@ -1,0 +1,44 @@
+<section class="dialog-wrapper">
+    <div>
+        <h4><b>Select the reason</b></h4>
+        <form [formGroup]="declineOrderForm">
+            <ng-container *ngIf="orderAction === 'reject'">
+                <div class="radio-btn d-flex align-items-center">
+                    <input type="radio" [value]="'item is not available'" name="reason" formControlName="reason" (change)="radioBtnSelectionChange()">
+                    <span>Item is not available</span>
+                </div>
+                <div class="radio-btn d-flex align-items-center">
+                    <input type="radio" [value]="'others'" name="reason" formControlName="reason" (change)="radioBtnSelectionChange()">
+                    <span>Others</span>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="orderAction === 'cancel'">
+                <h6 class="note mb-3">Note: 
+                    <i>{{cancellationPolicy.note}}
+                        <a href="{{cancellationPolicy.tnc}}" target="_blank" rel="noopener noreferrer"> Terms & Conditions</a>
+                    </i>
+                </h6>
+                <label class="custom-radio-btn" *ngFor="let reason of cancellationReasonsList">
+                    <input type="radio" [value]="reason.cancellationReason" name="reason" formControlName="reason"
+                        (change)="radioBtnSelectionChange()">
+                    <div>{{reason.cancellationReason}}</div>
+                </label>
+                <label class="custom-radio-btn mb-4">
+                    <input type="radio" [value]="'others'" name="reason" formControlName="reason"
+                        (change)="radioBtnSelectionChange()">
+                    <div>Others</div>
+                </label>
+            </ng-container>
+            <div *ngIf="showDescribeReasonField">
+                <h6>Describe your reason</h6>
+                <textarea formControlName="describeReason" class="other-reason-container"></textarea>
+                <app-form-error-msg [control]="declineOrderForm.controls.describeReason"></app-form-error-msg>
+            </div>
+            <div class="d-flex">
+                <button mat-button class="buttons me-3 mt-4 w-100 h-3" (click)="onDismiss()">don't cancel</button>
+                <button mat-button class="buttons active-button mt-4 w-100 h-3" (click)="onConfirm()">cancel
+                    order</button>
+            </div>
+        </form>
+    </div>
+</section>

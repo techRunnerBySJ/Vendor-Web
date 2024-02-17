@@ -1,0 +1,64 @@
+.dialog-wrapper {
+    margin: 0 auto;
+    padding: 2em;
+    width: 400px;
+    h4 {
+        margin-bottom: 32px;
+    }
+    img {
+        cursor: pointer;
+    }
+    .time {
+        padding: 8px 50px;
+        background-color: #fdf2cc;
+        border-radius: 38px;
+        span:nth-child(1) {
+            font-size: 24px;
+        }
+    }
+    .executive-card {
+        padding: 1.25em;
+        border-radius: 12px;
+        border: 1px solid #e7ecef;
+    }
+
+    .grey-out {
+        filter: grayscale(100%);
+        cursor: not-allowed;
+      }
+      .radio-btn {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        grid-gap: 1em;
+        height: 60px;
+    }
+    .radio-btn input {
+        position: relative;
+        appearance: none;
+    }
+    .radio-btn input::before {
+        position: absolute;
+        content: "";
+        height: 1.25em;
+        width: 1.25em;
+        border: 2px solid #000;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        transition: 0.3s all ease;
+    }
+    .radio-btn input:checked::before {
+        display: none;
+    }
+    .radio-btn input:checked::after {
+        position: absolute;
+        content: url("../../../../assets/tick.svg");
+        color: #0d1d28;
+        cursor: pointer;
+        top: -0.8em;
+        left: -0.9em;
+    }
+}

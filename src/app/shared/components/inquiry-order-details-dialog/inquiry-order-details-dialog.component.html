@@ -1,0 +1,263 @@
+<div class="modal hide drawer right-align" id="inquiryOrderDetailsModalRight" role="dialog"
+    aria-labelledby="inquiryOrderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label class="modal-title border-0" id="exampleModalLabel">Inquiry Order Details</label>
+                <mat-icon class="ms-3" (click)="closeModal()" data-dismiss="modal">close</mat-icon>
+            </div>
+            <!-- Vendor Pending Order Details -->
+            <div class="modal-body" *ngIf="inquiryOrderDetails && inquiryOrderDetails.status === 'customer_created'">
+                <div class="d-flex">
+                    <ng-container>
+                        <button class="buttons w-100 h-3 me-3" mat-button (click)="rejectOrder()">reject</button>
+                        <button class="buttons active-button w-100 h-3" mat-button (click)="confirmOrder()">Confirm</button>
+                    </ng-container>
+                </div>
+                <div class="order-details bill-print">
+                    <div class="pb-3 border-bottom d-flex justify-content-between align-items-center mb-3">
+                        <!--d-flex justify-content-between -->
+                        <ul class="p-0 m-0 list-unstyled">
+                            <li class="d-flex justify-content-between w-100">
+                                <b>#{{inquiryOrderDetails.inquiryOrderId}}</b>
+                            </li>
+                            <li class="color--grey">{{inquiryOrderDetails.customerName}}'s
+                                <!-- <b>#{{inquiryOrderDetails.customerOrderCount}} order</b></li> -->
+                            <li class="color--grey"><strong>{{inquiryOrderDetails.createdAt | date: 'd MMM yyyy,
+                                    hh:mm:ss a'}}</strong>
+                            </li>
+                            <li>
+                                <div class="call d-flex mt-1">
+                                    <img src="../../../../assets/icons/call.svg" height="20" width="20" alt="">
+                                    <span class="ms-2">{{inquiryOrderDetails.phone}}</span>
+                                </div>
+                            </li>
+                        </ul>
+                        <button class="buttons add-item w-50" (click)="addMenuItem(inquiryOrderDetails.inquiryOrderId)"><strong>+ Add New Item</strong></button>
+                    </div>
+
+                    <div class="cart-details d-flex flex-column"
+                        *ngFor="let orderItem of inquiryOrderDetails.menuItems; let i = index">
+                        <hr *ngIf="i !== 0">
+                        <div class="d-flex justify-content-between">
+                            <span class="">
+                                <b>{{orderItem.menuItemQuantity}} x {{orderItem.menuItemName}}</b>
+                                <p><em>
+                                        <strong *ngFor="let orderVariant of orderItem.menuVariants; let i=index">
+                                            {{orderVariant.menuVariantName}}
+                                            <span *ngIf="orderItem.menuVariants.length !== i+1">,&nbsp;</span>
+                                        </strong>
+                                        <br>
+                                    </em>
+                                </p>
+                            </span>
+                            <span>₹ {{orderItem.menuItemPrice}}</span>
+                        </div>
+                        <div class="edited text-uppercase mb-2"
+                            *ngIf="isItemQuantityEdited(orderItem.inquiryMenuItemId)">
+                            <span><strong>QUANTITY EDITED</strong></span>
+                        </div>
+                        
+                        <div class="edited text-uppercase mb-2" *ngIf="isItemOutOfStock(orderItem.inquiryMenuItemId)">
+                            <span><strong>Marked Out Of Stock</strong></span>
+                        </div>
+                        <div *ngIf="editQuantity.length">
+                            <div class="cart-details d-flex flex-column" *ngFor="let alt of editQuantity">
+                                <span class="w-100" *ngIf="alt.inquiry_item_id === orderItem.inquiryMenuItemId">
+                                    <div class="w-100 d-flex justify-content-between" *ngFor="let rep of alt.replacements">
+                                        <span class="w-100">
+                                            <div class="w-100 d-flex justify-content-between">
+                                                <b>{{rep.max_quantity}} x {{rep.menu_item_name}}</b>
+                                                <b>₹ {{rep.max_quantity*rep.display_price}}</b>
+                                            </div>
+                                            <p><em>
+                                                    <strong
+                                                        *ngFor="let orderVariant of rep.variant_groups; let i=index">
+                                                        {{orderVariant.variant_name}}
+                                                        <span *ngIf="rep.variant_groups.length !== i+1">,&nbsp;</span>
+                                                    </strong>
+                                                    <br>
+                                                </em>
+                                            </p>
+                                            <span
+                                                class="color--orenge d-flex text-uppercase text-decoration-underline cursor-enabled"
+                                                (click)="removeFromEditQuantity(alt.inquiry_item_id)">REMOVE EDITED
+                                                QUANTITY</span>
+                                        </span>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
+                        <div *ngIf="selectAlt.length">
+                            
+                            <div class="cart-details d-flex w-100" *ngFor="let alt of selectAlt">
+                                <span class="w-100" *ngIf="alt.inquiry_item_id === orderItem.inquiryMenuItemId">
+                                    <div class="d-flex flex-column w-100" *ngFor="let rep of alt.replacements">
+                                        <div class="edited text-uppercase mt-2" *ngIf="rep">
+                                            <span><strong>Alternative Selected</strong></span>
+                                        </div>
+                                        <div  class="d-flex justify-content-between flex-column">
+                                        <span>
+                                            <div class="d-flex justify-content-between w-100">
+                                                <b>{{rep.max_quantity}} x {{rep.menu_item_name}}</b>
+                                                <b>₹ {{rep.max_quantity*rep.display_price}}</b>
+                                            </div>
+                                            <p><em>
+                                                    <strong
+                                                        *ngFor="let orderVariant of rep.variant_groups; let i=index">
+                                                        <span>
+                                                            {{orderVariant.variant_name}}
+                                                        </span>
+                                                        <span *ngIf="rep.variant_groups.length !== i+1">,&nbsp;</span>
+                                                    </strong>
+                                                    <br>
+                                                </em>
+                                            </p>
+                                            <span
+                                                class="color--orenge d-flex text-uppercase text-decoration-underline cursor-enabled"
+                                                (click)="removeFromAltItem(rep.menu_item_id)">REMOVE
+                                                ALTERNATIVE</span>
+                                        </span>
+                                    </div>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="action d-flex align-items-center">
+                            <!-- <button class="active-button text-uppercase" (click)="selectAlternativeMenuItems()"><strong>select alternative</strong></button> -->
+                            <span class="color--orenge d-flex text-uppercase text-decoration-underline cursor-enabled"
+                                (click)="selectAlternativeMenuItems(orderItem.masterCategoryId, orderItem.inquiryMenuItemId)">select
+                                alternative</span>
+                            <span class="text-uppercase text-decoration-underline cursor-enabled ms-3"
+                                (click)="editQuantityOfMenuItems(orderItem.inquiryMenuItemId, orderItem.menuItemId, orderItem.menuItemName, orderItem.menuItemQuantity, orderItem.menuVariants, orderItem.menuItemPrice)">edit
+                                quantity</span>
+                            <span class="color--red d-flex text-uppercase text-decoration-underline cursor-enabled ms-3"
+                                (click)="isItemOutOfStock(orderItem.inquiryMenuItemId)?markInStockMenuItems(orderItem.inquiryMenuItemId):markOutOfStockMenuItems(orderItem.inquiryMenuItemId)">{{isItemOutOfStock(orderItem.inquiryMenuItemId)?'in
+                                stock' : 'out of stock'}}</span>
+                        </div>
+                    </div>
+
+
+                    <div class="special-request my-3" *ngIf="inquiryOrderDetails.anySpecialRequest">
+                        <p>special request</p>
+                        <span>{{inquiryOrderDetails.anySpecialRequest}}</span>
+                    </div>
+                </div>
+
+                <!-- NEW ITEM ADDED BLOCK -->
+                <strong *ngIf="addNewItem.length">NEW ITEMS ADDED</strong>
+                <div *ngIf="addNewItem.length" class="order-details">
+                    <div class="cart-details d-flex flex-column" *ngFor="let newItem of addNewItem">
+                        <div class="d-flex justify-content-between">
+                            <b>{{newItem.max_quantity}} x {{newItem.menu_item_name}}</b>
+                            <b>₹ {{newItem.max_quantity*newItem.display_price}}</b>
+                        </div>
+                            <span class="">
+                                <p><em>
+                                        <strong *ngFor="let orderVariant of newItem.variant_groups; let i=index">
+                                            <span>
+                                                {{orderVariant.variant_name}}
+                                            </span>
+                                            <span *ngIf="newItem.variant_groups.length !== i+1">,&nbsp;</span>
+                                        </strong>
+                                        <br>
+                                    </em>
+                                </p>
+                            </span>
+                        <span class="color--orenge d-flex text-uppercase text-decoration-underline cursor-enabled"
+                            (click)="removeFromNewItem(newItem.menu_item_id)">REMOVE</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Pending Order Detials  -->
+            <div class="modal-body" *ngIf="inquiryOrderDetails && inquiryOrderDetails.status !== 'customer_created'"> 
+                <div class="order-details bill-print">
+                    <div class="pb-3 border-bottom d-flex justify-content-between align-items-center mb-3">
+                        <!--d-flex justify-content-between -->
+                        <ul class="p-0 m-0 list-unstyled">
+                            <li class="d-flex justify-content-between w-100">
+                                <b>#{{inquiryOrderDetails.inquiryOrderId}}</b>
+                            </li>
+                            <li class="color--grey">{{inquiryOrderDetails.customerName}}'s
+                                <!-- <b>#{{inquiryOrderDetails.customerOrderCount}} order</b></li> -->
+                            <li class="color--grey"><strong>{{inquiryOrderDetails.createdAt | date: 'd MMM yyyy,
+                                    hh:mm:ss a'}}</strong>
+                            </li>
+                            <li>
+                                <div class="call d-flex mt-1">
+                                    <img src="../../../../assets/icons/call.svg" height="20" width="20" alt="">
+                                    <span class="ms-2">{{inquiryOrderDetails.phone}}</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="cart-details d-flex flex-column" *ngFor="let orderItem of inquiryOrderDetails.menuItems; let i = index">
+                        <hr *ngIf="i !== 0">
+                        <div class="new-item d-flex flex-column mb-2" *ngIf="orderItem.vendorStatus === 'vendor_added'">
+                            <strong class="d-flex text-uppercase"><em>New Item</em></strong>
+                        </div>
+                        <div class="d-flex flex-column mb-2" *ngIf="!orderItem.menuReplacements.length && orderItem.vendorStatus === 'not_available'">
+                            <strong class="out-of-stock d-flex text-uppercase"><em>Out Of Stock</em></strong>
+                        </div>
+                        <div *ngIf="orderItem.vendorStatus !== 'available'">
+                            <div class="d-flex justify-content-between">
+                                <span class="">
+                                    <b>{{orderItem.menuItemQuantity}} x {{orderItem.menuItemName}}</b>
+                                    <p><em>
+                                        <strong *ngFor="let orderVariant of orderItem.menuVariants; let i=index">
+                                            {{orderVariant.menuVariantName}}
+                                            <span *ngIf="orderItem.menuVariants.length !== i+1">,&nbsp;</span>
+                                        </strong>
+                                        <br>
+                                    </em>
+                                </p>
+                            </span>
+                            <span>₹ {{orderItem.menuItemPrice}}</span>
+                             </div>
+                            </div>
+                            <div *ngIf="orderItem.vendorStatus === 'available'">
+                                <div class="d-flex justify-content-between" *ngFor="let confirmedItems of orderItem.menuConfirmedItems; let i=index">
+                                    <span class="">
+                                        <b>{{confirmedItems.confirmedQuantity}} x {{confirmedItems.confirmedItemName}}</b>
+                                        <p><em>
+                                            <strong *ngFor="let orderVariant of confirmedItems.confirmedVariants; let i=index">
+                                                {{orderVariant.menuVariantName}}
+                                                <span *ngIf="confirmedItems.confirmedVariants.length !== i+1">,&nbsp;</span>
+                                            </strong>
+                                            <br>
+                                        </em>
+                                    </p>
+                                </span>
+                                <span>₹ {{confirmedItems.confirmedItemPrice}}</span>
+                            </div>
+                        </div>
+                        <!-- <div *ngIf="orderItem.vendorStatus === 'not_available'"> -->
+                        <div class="d-flex flex-column mt-2" *ngIf="orderItem.menuReplacements.length && orderItem.vendorStatus === 'not_available'">
+                            <strong class="replacement-item d-flex text-uppercase mb-2"><em>Replacement Item</em></strong>
+                        </div>
+                            <div class="d-flex justify-content-between" *ngFor="let replacementItems of orderItem.menuReplacements; let i=index" >
+                                <span class="">
+                                    <b>{{replacementItems.maxQuantity}} x {{replacementItems.replacementItemName}}</b>
+                                    <p><em>
+                                        <strong *ngFor="let orderVariant of replacementItems.replacementVariants; let i=index">
+                                            {{orderVariant.menuVariantName}}
+                                            <span *ngIf="replacementItems.replacementVariants.length !== i+1">,&nbsp;</span>
+                                        </strong>
+                                        <br>
+                                    </em>
+                                </p>
+                            </span>
+                            <span>₹ {{replacementItems.replecementItemPrice}}</span>
+                        </div>
+                    </div>
+                    <!-- </div> -->
+                        <div class="special-request my-3" *ngIf="inquiryOrderDetails.anySpecialRequest">
+                            <p>special request</p>
+                            <span>{{inquiryOrderDetails.anySpecialRequest}}</span>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

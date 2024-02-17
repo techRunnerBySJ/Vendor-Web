@@ -1,0 +1,89 @@
+<div class="history-wrapper">
+    <header class="history-wrapper__header"><b>Order History</b></header>
+
+    <main class="history-wrapper__content w-100">
+        <button mat-button class="buttons me-3 mb-4" [ngClass]="{'active-button': orderStatus === 'completed'}" (click)="onOrderStatusButtonClick('completed')"> delivered </button>
+        <button mat-button class="buttons me-3 mb-4" [ngClass]="{'active-button': orderStatus === 'cancelled'}" (click)="onOrderStatusButtonClick('cancelled')"> cancelled </button>
+
+        <section class="row align-items-center mb-3">
+            <div class="col-2">
+                <div class="input-group align-items-end">
+                    <div class="input-group-prepend">
+                        <img class="align-top" src="assets/icons/search-icon.svg" alt="search icon">
+                    </div>
+                    <input type="text" class="form-control border-0 bg-light" placeholder="Search order id" [formControl]="search" (keydown.enter)="currentPage = 1;getHistoryData()">
+                </div>
+            </div>
+            <div class="col-2">
+                <mat-form-field appearance="outline">
+                    <input matInput (click)="fromDate.open()" [matDatepicker]="fromDate" [max]="maxDate" [readonly]="true" name="fromDate" [(ngModel)]="startDate" placeholder="Select Start Date">
+                    <mat-datepicker-toggle matSuffix [for]="fromDate"></mat-datepicker-toggle>
+                    <mat-datepicker #fromDate></mat-datepicker>
+                    <button mat-icon-button matSuffix *ngIf="startDate" (click)="resetFilterControls('date')">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+            <div class="input-details col-2">
+                <mat-form-field appearance="outline">
+                    <input matInput type="time" name="startTime" [(ngModel)]="startTime" placeholder="Select Start Time">
+                    <button mat-icon-button matSuffix *ngIf="startTime" (click)="resetFilterControls('startTime')">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+            <div class="col-2">
+                <mat-form-field appearance="outline">
+                    <input matInput (click)="toDate.open()" [matDatepicker]="toDate" [max]="maxDate" [min]="startDate" [readonly]="true" name="toDate" [(ngModel)]="endDate" placeholder="Select End Date">
+                    <mat-datepicker-toggle matSuffix [for]="toDate"></mat-datepicker-toggle>
+                    <mat-datepicker #toDate></mat-datepicker>
+                    <button mat-icon-button matSuffix *ngIf="endDate" (click)="resetFilterControls('date')">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+            <div class="input-details col-2">
+                <mat-form-field appearance="outline">
+                    <input matInput type="time" name="endTime" [(ngModel)]="endTime" placeholder="Select End Time">
+                    <button mat-icon-button matSuffix *ngIf="endTime" (click)="resetFilterControls('endTime')">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+            <div class="col-2">
+                <button class="buttons active-button me-2" mat-button (click)="currentPage = 1;getHistoryData()">apply</button>
+                <button class="buttons" mat-button (click)="resetFilterControls('')">clear</button>
+            </div>
+        </section>
+        <ng-container *ngIf="ordersList.length; else noDataFound">
+            <section class="orders-grid">
+                <div class="order-card d-flex justify-content-between align-items-baseline" *ngFor="let order of ordersList| paginate: {itemsPerPage: pageSize,  currentPage: currentPage,totalItems: totalOrders };let i=index"
+                    (click)="openOrderDetailsModal(order.orderId)">
+                    <ul class="w-75">
+                        <li class="order-date"><b>{{order.orderPlacedTime | date: 'd MMM, y'}}</b></li>
+                        <li class="order-det"><b>#{{order.orderId}}, {{order.customerDetails.name}}</b></li>
+                        <li class="cart d-flex">
+                            <span class="order-det">{{order.orderItems[0].orderItemQuantity}} x
+                                {{order.orderItems[0].orderItemName}}</span>
+                            <span *ngIf="order.orderItems.length > 1"><b> + {{order.orderItems.length - 1}}
+                                    More</b></span>
+                        </li>
+                    </ul>
+                    <ul class="pull-right">
+                        <li>{{order.orderStatus === 'cancelled' ? order.cancelledBy : '&nbsp;'}}
+                        </li>
+                        <li><strong>{{order.invoiceDetails.vendorPayoutAmount}}</strong></li>
+                        <mat-icon>keyboard_arrow_right</mat-icon>
+                    </ul>
+                </div>
+            </section>
+            <pagination-controls style="grid-column: 2;" (pageChange)="currentPage = $event;getHistoryData()"></pagination-controls>
+        </ng-container>
+        <ng-template #noDataFound>
+            <section class="d-flex flex-column justify-content-center align-items-center mt-5">
+                <img width="131" height="131" src="../../../../assets/icons/page404.svg">
+                <h3>Umm...no data found!</h3>
+            </section>
+        </ng-template>
+    </main>
+</div>

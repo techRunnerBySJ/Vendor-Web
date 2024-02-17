@@ -1,0 +1,90 @@
+$width-fit-content: fit-content;
+$accent-color: #33c4b6;
+.subscription-plans-container {
+    .wrapper {
+        font-weight: 400;
+        color: #9f9f9f;
+        font-size: 15px;
+        .plans {
+            box-sizing: border-box;
+            width: 340px;
+            border: 3px solid #e8e8e8;
+            border-radius: 7px;
+            display: inline-block;
+            padding: 24px;
+            text-align: center;
+            margin-right: 11px;
+            position: relative;
+            .subscription-status {
+                background-color: rgb(242 245 248);
+                position: absolute;
+                top: -1rem;
+            }
+            .subscription-status--green {
+                color: #04a971;
+            }
+            .subscription-status--orange {
+                color: #ea7407;
+            }
+            .subscription-status--red {
+                color: #d71645;
+            }
+            .plan-category {
+                color: #565656;
+                font-weight: 300;
+                font-size: 3rem;
+                margin-top: -5px;
+            }
+            .plan-details {
+                font-size: .9rem;
+                font-weight: 600;
+                padding: 2px 21px 2px 21px;
+                color: $accent-color;
+                border: 1px solid #e4e4e4;
+                display: inline-block;
+                border-radius: 15px;
+                background-color: white;
+                position: relative;
+                bottom: -20px;
+                width: fit-content;
+            }
+            ul {
+                list-style: none;
+                padding: 0;
+                text-align: left;
+                margin-top: 29px;
+                padding-left: 1rem !important;
+                color: #6D7E8B;
+                li {
+                    margin-bottom: 15px;
+                    &:before {
+                        @extend .checkIcon;
+                        font-size: 1.3rem;
+                        color: $accent-color;
+                        margin-right: 3px;
+                    }
+                }
+                .coming-soon {
+                    font-weight: 800;
+                    font-size: 20px;
+                }
+            }
+            .checkIcon {
+                content: "\2713";
+            }
+        }
+        .active-plan {
+            border-color: $accent-color;
+            &::before {
+                border-style: solid;
+                border-width: 64px 64px 0 0;
+                border-color: #3bc6b8 transparent transparent transparent;
+                background-color: rgb(242 245 248);
+                position: relative;
+                float: left;
+                bottom: 24px;
+                right: 24px;
+            }
+        }
+    }
+}

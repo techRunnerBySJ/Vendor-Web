@@ -1,0 +1,20 @@
+<section class="dialog-wrapper">
+    <h4 class="mb-3"><b>{{title}}</b></h4>
+
+    <div class="input-details mb-3" *ngIf="showMasterCategoryField">
+        <label class="input-heading">Master Category</label>
+        <ng-select [items]="masterCategoryList" bindValue="id"
+            bindLabel="name" placeholder="Select master category" [formControl]="masterCategory"></ng-select>
+        <app-form-error-msg [control]="masterCategory"></app-form-error-msg>
+    </div>
+    <div class="input-details mb-3">
+        <label class="input-heading">{{inputFiledLabel}}</label>
+        <mat-form-field appearance="outline">
+            <textarea matInput name="name" [formControl]="name" placeholder="Enter name"></textarea>
+        </mat-form-field>
+        <app-form-error-msg [control]="name"></app-form-error-msg>
+    </div>
+
+    <button class="buttons active-button h-3 w-100 mb-2" mat-button (click)="onAdd()"> {{data.isEdit ? 'Save' : 'Add'}}</button>
+    <button class="buttons buttons--white w-100" mat-button (click)="onDismiss()">Not Now</button>
+</section>

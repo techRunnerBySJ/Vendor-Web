@@ -1,0 +1,17 @@
+<section class="dialog-wrapper">
+    <header class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Discount Sequence</h3>
+        <mat-icon class="cursor-enabled" (click)="onDismiss()">close</mat-icon>
+    </header>
+    <h6 class="note">
+        <i>Drag and drop to determine the sequence of the discount in which it will be visible to the customer</i>
+    </h6>
+    <div cdkDropList cdkDropListOrientation="vertical" (cdkDropListDropped)="drop($event)">
+        <div class="offer-code mt-2" *ngFor="let item of discountSequence" cdkDrag>
+            <strong>{{item.couponName}}</strong>
+        </div>
+    </div>
+    <div class="text-end">
+        <button class="buttons active-button mx-0" mat-button (click)="onConfirm()">save</button>
+    </div>
+</section>

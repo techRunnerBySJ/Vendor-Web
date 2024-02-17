@@ -1,0 +1,291 @@
+<div class="modal hide drawer right-align" id="orderDetailsModalRight" role="dialog"
+    aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label class="modal-title border-0" id="exampleModalLabel">Order Details</label>
+                <mat-icon class="ms-3" (click)="closeModal()" data-dismiss="modal">close</mat-icon>
+            </div>
+            <div class="modal-body" *ngIf="orderDetails">
+                <div class="d-flex">
+                    <ng-container *ngIf="isNewOrder">
+                        <button class="buttons w-100 h-3 me-3" mat-button (click)="rejectOrder()">decline</button>
+                        <button class="buttons active-button w-100 h-3" mat-button
+                            (click)="acceptOrder()">accept</button>
+                    </ng-container>
+                    <ng-container *ngIf="isPreparingOrder">
+                        <button class="buttons w-100 h-3 me-3" mat-button (click)="cancelOrder()">cancel</button>
+                        <button class="buttons active-button w-100 h-3" mat-button (click)="markReadyOrder()"
+                            *ngIf="!orderDetails.orderMarkedReadyTime">mark ready</button>
+                    </ng-container>
+                </div>
+                <span class="d-flex justify-content-end align-items-center">
+                    <button *ngIf="orderDetails?.orderStatus==='placed'" mat-button class="buttons buttons--yellow"
+                        (click)="openPrintInvoiceModal('kot')" matTooltip="Print KOT" matTooltipClass="custom-tooltip">
+                        <img src="../../../../assets/icons/printer-icon.svg" width="20" height="20" class="align-middle"
+                            alt="KOT"> KOT
+                    </button>
+                    <button *ngIf="orderDetails?.orderStatus==='placed'" mat-button class="buttons active-button ms-2"
+                        (click)="openPrintInvoiceModal('bill')" matTooltip="Print Bill"
+                        matTooltipClass="custom-tooltip">
+                        <img src="../../../../assets/icons/printer-icon.svg" width="20" height="20" class="align-middle"
+                            alt="BILL"> BILL
+                    </button>
+                </span>
+                <div *ngIf="isNewOrder" class="order-card m-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="progressbar">
+                            <div [ngStyle]="{width: (orderDetails.progressbarWidth) + '%'}"
+                                [ngClass]="{'progressbar--orange': orderDetails.isTimerAlert, 'progressbar--red': orderDetails.isTimerDanger}">
+                            </div>
+                        </span>
+                        <span class="timer--green"
+                            [ngClass]="{'timer--orange': orderDetails.isTimerAlert, 'timer--red': orderDetails.isTimerDanger}"><b>
+                                {{orderDetails.timeLeft}}</b></span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="order-det"><b>#{{orderDetails.orderId}}
+                                {{orderDetails.customerDetails.name}}</b></span>
+                        <span><b>{{orderDetails.invoiceDetails.vendorPayoutAmount}}</b></span>
+                    </div>
+                    <div class="cart d-flex">
+                        <span class="order-det">{{orderDetails.orderItems[0].orderItemQuantity}} x
+                            {{orderDetails.orderItems[0].orderItemName}}</span>
+                        <!-- <ng-container *ngFor="let orderItem of order.orderItems;let i=index">
+                    <label *ngIf="i === 0">{{orderItem.orderItemQuantity}} x {{orderItem.orderItemName}} </label>
+                </ng-container> -->
+                        <span *ngIf="orderDetails.orderItems.length > 1"><b> + {{orderDetails.orderItems.length - 1}}
+                                More</b></span>
+                    </div>
+
+                </div>
+                <div class="order-card d-flex flex-column" *ngIf="orderDetails.cancellationDetails">
+                    <span class="d-flex justify-content-between">
+                        <label class="text-red"><b>Reason for Cancellation</b></label>
+                        <span class="text-red text-break">{{orderDetails.cancellationReason ? orderDetails.cancellationReason :
+                            'N/A'}}</span>
+                    </span>
+                    <span class="d-flex justify-content-between mt-2">
+                        <label><b>Cancellation Time </b></label>
+                        <span>{{orderDetails.cancellationTime | date: 'd MMM yyyy, hh:mm:ss a'}}</span>
+                    </span>
+                </div>
+                <div class="order-details bill-print">
+                    <div class="pb-3 border-bottom mb-3">
+                        <!--d-flex justify-content-between -->
+                        <ul class="p-0 m-0 list-unstyled">
+                            <li class="d-flex justify-content-between w-100">
+                                <b>#{{orderDetails.orderId}}</b>
+                            </li>
+                            <li class="color--grey">{{orderDetails.customerDetails.name}}'s,
+                                <b>#{{orderDetails.customerOrderCount}} order</b></li>
+                            <li class="color--grey">{{orderDetails.orderPlacedTime | date: 'd MMM yyyy, hh:mm:ss a'}}
+                            </li>
+                            <!-- <li class="color--grey">
+                        {{orderDetails.customerDetails.addressLine1}}, {{orderDetails.customerDetails.addressLine2}},
+                        {{orderDetails.customerDetails.city}}, {{orderDetails.customerDetails.state}}, {{orderDetails.customerDetails.country}} - 
+                        {{orderDetails.customerDetails.pinCode}}
+                    </li> -->
+                        </ul>
+                        <!-- <ul *ngIf="openedFrom === 'new order' || openedFrom === 'preparing-inTransit order'" class="pull-right">
+                    <button mat-button class="buttons buttons--yellow" (click)="toggleHelpModal()">
+                        <img class="align-baseline" src="assets/icons/exclamation-black-icon.svg" alt="help icon"> help
+                    </button>
+                </ul> -->
+                    </div>
+
+                    <div class="cart-details" *ngFor="let orderItem of orderDetails.orderItems">
+                        <span class="w-75">
+                            <b>{{orderItem.orderItemQuantity}} x {{orderItem.orderItemName}}</b>
+                            <p><em>
+                                    <strong *ngFor="let orderVariant of orderItem.orderVariants; let i=index">
+                                        {{orderVariant.orderVaraintName}}
+                                        <span *ngIf="orderItem.orderVariants.length !== i+1">,&nbsp;</span>
+                                    </strong>
+                                    <br>
+                                    <strong *ngIf="orderItem.orderAddons.length">Add On: </strong>
+                                    <strong *ngFor="let orderAddon of orderItem.orderAddons; let j=index">
+                                        {{orderAddon.orderAddonName}}
+                                        <span *ngIf="orderItem.orderAddons.length !== j+1">,&nbsp;</span>
+                                    </strong>
+                                </em>
+                            </p>
+                        </span>
+                        <span>{{orderItem.orderItemFinalPrice}}</span>
+                    </div>
+                    <div class="special-request my-3" *ngIf="orderDetails.anySpecialRequest">
+                        <p>special request</p>
+                        <span>{{orderDetails.anySpecialRequest}}</span>
+                    </div>
+                    <h6><b>Billing Summary</b></h6>
+                    <ng-container
+                        [ngTemplateOutlet]="invoiceBreakout"></ng-container>
+
+                </div>
+                <!-- <div *ngIf="openedFrom === 'customer review' || openedFrom === 'history'" class="cards">
+            <div class="card-heading">
+                <div class="customer-details">
+                    <img class="customer-dp" height="50" width="50" src="assets/profile-dp.jpeg" alt="profile-icon">
+                    <div>
+                        <h6><b>Kamal</b> </h6>
+                        <span>15 Nov 2021</span>
+                    </div>
+                </div>
+                <div class="customer-id">ID: 2144141</div>
+            </div>
+            <div class="card-content">
+               Really great service by them! I will recommend
+            </div>
+        </div> -->
+
+            </div>
+        </div>
+    </div>
+    <app-print-invoice *ngIf="showPrintInvoiceModal" [orderDetails]="orderDetails">
+    </app-print-invoice>
+</div>
+
+<app-help-dialog *ngIf="showHelpModal" (closeModal)="toggleHelpModal()"></app-help-dialog>
+
+<!-- Invoice -->
+<!-- <ng-template #invoiceV1>
+    <div class="cart-details">
+        <span> Item total</span>
+        <span>{{orderDetails.invoiceDetails.totalItemCost}}</span>
+    </div>
+    <div class="cart-details">
+        <span> Total Packing Charges</span>
+        <span>{{orderDetails.invoiceDetails.totalPackingCharges}}</span>
+    </div>
+    <div class="cart-details">
+        <span> taxes</span>
+        <span>{{orderDetails.invoiceDetails.totalTax}}</span>
+    </div>
+    <div class="cart-details" *ngIf="orderDetails.couponDetails">
+        <span>Discount by Vendor</span>
+        <span><span class="discount-code">{{orderDetails.couponDetails.couponCode}}</span> - {{orderDetails.couponDetails.vendorDiscountShareAmount}}</span>
+    </div>
+    <div class="cart-details" *ngIf="orderDetails.couponDetails">
+        <span>Discount by Speedyy</span>
+        <span><span class="discount-code">{{orderDetails.couponDetails.couponCode}}</span> - {{orderDetails.couponDetails.speedyyDiscountShareAmount}}</span>
+
+    </div>
+
+    <div class="cart-details border-top pt-3">
+        <span> <b>bill total</b></span>
+        <span>{{orderDetails.invoiceDetails.vendorPayoutAmount}}</span>
+    </div>
+</ng-template> -->
+
+<!-- <ng-template #invoiceV2>
+    <h6><strong>Customer</strong></h6>
+    <div class="cart-details">
+        <span>Total Item Cost</span>
+        <span>{{orderDetails.invoiceDetails.totalItemCost}}</span>
+    </div>
+    <div class="cart-details">
+        <span>Packaging Charges</span>
+        <span>{{orderDetails.invoiceDetails.totalPackingCharges}}</span>
+    </div>
+    <div class="cart-details" *ngIf="service === Services.Paan">
+        <span>Platform Fees for Customer</span>
+        <span>{{orderDetails.invoiceDetails.speedyyChargesForCustomer}}</span>
+    </div>
+    <div class="cart-details">
+        <span>GST (Item + Packaging)</span>
+        <span>{{orderDetails.invoiceDetails.totalTax}}</span>
+    </div>
+    <div class="cart-details">
+        <span>Delivery Charges (inclusive of GST)</span>
+        <span>{{orderDetails.invoiceDetails.deliveryBreakoutCustomerSharingAmount}}</span>
+    </div>
+    <div class="cart-details" *ngIf="orderDetails.couponDetails">
+        <span>Discounts</span>
+        <span><span class="discount-code">{{orderDetails.couponDetails.couponCode}}</span> - {{orderDetails.couponDetails.discountAmount}}</span>
+    </div>
+    <div class="cart-details" *ngIf="orderDetails.couponDetails">
+        <span>Discount by Vendor</span>
+        <span><span class="discount-code">{{orderDetails.couponDetails.couponCode}}</span> - {{orderDetails.couponDetails.vendorDiscountShareAmount}}</span>
+    </div>
+    <div class="cart-details" *ngIf="orderDetails.couponDetails">
+        <span>Discount by Speedyy</span>
+        <span><span class="discount-code">{{orderDetails.couponDetails.couponCode}}</span> - {{orderDetails.couponDetails.speedyyDiscountShareAmount}}</span>
+
+    </div>
+    <div class="cart-details" *ngIf="orderDetails.invoiceDetails.transactionChargesPaidBy === 'customer'">
+        <span>Transaction Charges</span>
+        <span>{{orderDetails.invoiceDetails.txnCharges}}</span>
+    </div>
+    <div class="cart-details">
+        <span><strong>Total Customer Payable</strong></span>
+        <span><strong>{{orderDetails.invoiceDetails.totalCustomerPayable}}</strong></span>
+    </div>
+    <hr>
+    <h6><strong>Vendor</strong></h6>
+    <div class="cart-details" *ngIf="service === Services.Paan">
+        <span>Platform Fees for Customer</span>
+        <span>- {{orderDetails.invoiceDetails.speedyyChargesForCustomer}}</span>
+    </div>
+    <div class="cart-details">
+        <span>GST (Item + Packaging)</span>
+        <span>- {{orderDetails.invoiceDetails.totalTax}}</span>
+    </div>
+    <div class="cart-details">
+        <span>Delivery Charges (Vendor)</span>
+        <span>- {{orderDetails.invoiceDetails.deliveryBreakoutVendorSharingAmount}}</span>
+    </div>
+    <div class="cart-details">
+        <span>Delivery Charges (Customer)</span>
+        <span>- {{orderDetails.invoiceDetails.deliveryBreakoutCustomerSharingAmount}}</span>
+    </div>
+    <div class="cart-details">
+        <span>Transaction Charges</span>
+        <span>- {{orderDetails.invoiceDetails.txnCharges}}</span>
+    </div>
+    <div class="cart-details" *ngIf="orderDetails.invoiceDetails.isSpeedyyChargesApplied">
+        <span>Speedyy Charges (inclusive of taxes)</span>
+        <span>- {{orderDetails.invoiceDetails.totalSpeedyyCharges}}</span>
+    </div>
+    <div class="cart-details" *ngIf="orderDetails.couponDetails">
+        <span>Discount by Speedyy</span>
+        <span><span class="discount-code">{{orderDetails.couponDetails.couponCode}}</span> {{orderDetails.couponDetails.speedyyDiscountShareAmount}}</span>
+    </div>
+    <div class="cart-details">
+        <span><strong>Vendor Payout Amount</strong></span>
+        <span><strong>{{orderDetails.invoiceDetails.vendorPayoutAmount}}</strong></span>
+    </div>
+</ng-template> -->
+
+<ng-template #invoiceBreakout>
+        <hr>
+        <div>
+            <strong>Customer</strong>
+        </div>
+        <br>
+        <div class="cart-details" *ngFor="let payoutAmountLineItems of orderDetails.customerInvoice.payableAmountLineItems"> 
+            <span [ngClass]="{'strikeThrough': payoutAmountLineItems.isStrikethrough}" [ngStyle]="{'color': payoutAmountLineItems.displayLabelColor}">{{ payoutAmountLineItems.displayLabel }}</span>
+            <span [ngClass]="{'strikeThrough': payoutAmountLineItems.isStrikethrough}" [ngStyle]="{'color': payoutAmountLineItems.amountColor}">{{ payoutAmountLineItems.amount }}</span>
+        </div>
+        <div class="cart-details">
+            <span><strong>{{ orderDetails.customerInvoice.totalPayableAmount.displayLabel }}</strong></span>
+            <span [ngClass]="{'strikeThrough': orderDetails.customerInvoice.totalPayableAmount.isStrikethrough}" [ngStyle]="{'color': orderDetails.customerInvoice.totalPayableAmount.amountColor}"><strong>{{ orderDetails.customerInvoice.totalPayableAmount.amount }}</strong></span>
+       </div>
+        
+    <div>
+        <hr>
+        <div>
+            <strong>Vendor</strong>
+        </div>
+        <br>
+        <div class="cart-details" *ngFor="let payoutAmountLineItems of orderDetails.vendorInvoice.payoutAmountLineItems"> 
+            <span [ngClass]="{'strikeThrough': payoutAmountLineItems.isStrikethrough}" [ngStyle]="{'color': payoutAmountLineItems.displayLabelColor}">{{ payoutAmountLineItems.displayLabel }}</span>
+            <span [ngClass]="{'strikeThrough': payoutAmountLineItems.isStrikethrough}" [ngStyle]="{'color': payoutAmountLineItems.amountColor}">{{ payoutAmountLineItems.amount }}</span>
+        </div>
+        <div class="cart-details">
+            <span [ngClass]="{'strikeThrough': orderDetails.vendorInvoice.totalPayoutAmount.isStrikethrough}" [ngStyle]="{'color': orderDetails.vendorInvoice.totalPayoutAmount.displayLabelColor}"><strong>{{ orderDetails.vendorInvoice.totalPayoutAmount.displayLabel }}</strong></span>
+            <span [ngClass]="{'strikeThrough': orderDetails.vendorInvoice.totalPayoutAmount.isStrikethrough}" [ngStyle]="{'color': orderDetails.vendorInvoice.totalPayoutAmount.amountColor}"><strong>{{ orderDetails.vendorInvoice.totalPayoutAmount.amount }}</strong></span>
+       </div>
+        
+    </div>
+
+</ng-template>

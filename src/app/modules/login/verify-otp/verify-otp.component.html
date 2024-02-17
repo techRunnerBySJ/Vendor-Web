@@ -1,0 +1,29 @@
+<div class="verify-otp-main">
+    <div class="verify-otp-wrapper d-flex justify-content-center align-items-center">
+        <div class="box-form">
+
+            <!-- verify otp form -->
+            <form class="verify-otp-form">
+                <!-- form heading and logo -->
+                <app-form-header></app-form-header>
+
+                <label class="input-heading">Enter the 5-digit verification OTP we have sent:</label>
+                <div class="input-field d-flex justify-content-center align-items-center">
+
+                    <!-- otp input boxes -->
+                    <ng-otp-input (onInputChange)="onOtpChange($event)" [ngStyle]="{'margin': 'otpMargin'}" [config]="config">
+                    </ng-otp-input>
+                    <div class="resend-signIn d-flex">
+                        <span class="timer" *ngIf="!canResendEmailOtp">{{emailOtpResendTimer}} secs left</span>
+                        <a (click)="resendOtp()" class="a-link" *ngIf="canResendEmailOtp">Resend Code</a>
+                        <a (click)="navigatesToLoginPage()" class="a-link a-link--ml">Sign in again</a>
+                    </div>
+                </div>
+
+                <button mat-button class="buttons active-button h-3" (click)=validateOtp()>VALIDATE OTP</button>
+            </form>
+
+        </div>
+        <!-- footer for login and forgot password form -->
+        <app-footer></app-footer>
+    </div>

@@ -1,0 +1,62 @@
+.prep-time-container {
+    header {
+        .navigate-to-more {
+            width: fit-content;
+        }
+        .prep-time-title {
+            font-size: 28px;
+            color: #6d7e8b;
+        }
+    }
+    .average-time {
+        border-radius: 10px;
+        background: white;
+        border: 1px solid #dee2e6;
+        padding: 1.5rem;
+        &__heading {
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 15px;
+            .title {
+                font-size: large;
+                text-transform: uppercase;
+            }
+            .all-days {
+                border-radius: 5px;
+                background: lightgrey;
+                padding: 0.5rem;
+            }
+        }
+        &__details {
+            .time {
+                font-size: 22px;
+            }
+            a {
+                cursor: pointer;
+                text-transform: uppercase;
+                text-decoration: none;
+                color: black;
+                font-size: 1em;
+            }
+        }
+    }
+    .rush-hours {
+        height: 15rem;
+        &__days {
+            font-size: 15px;
+            color: #6d7e8b;
+            mat-icon {
+                margin-right: 1rem;
+            }
+        }
+    }
+    .timing {
+        height: 12rem;
+    }
+    button {
+        border: none;
+    }
+}
+
+.clickable {
+    cursor: pointer;
+}

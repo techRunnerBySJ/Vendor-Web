@@ -1,0 +1,21 @@
+.dialog-wrapper {
+    margin: 0 auto;
+    padding: 2em;
+    text-align: center;
+    width: 400px;
+
+    .tick {
+        position: absolute;
+        left: 50%;
+        width: 4em;
+        margin: 2em 0;
+        transform: translate(-50%, -50%);
+        filter: invert(80%) sepia(95%) saturate(755%) hue-rotate(70deg) brightness(135%) contrast(100%);
+    }
+
+    .message {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 40px;
+    }
+}

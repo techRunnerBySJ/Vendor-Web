@@ -1,0 +1,23 @@
+<div class="prep-time-container mt-3">
+
+    <!-- main section containing all the features -->
+    <div class="average-time w-100 d-flex flex-column justify-content-between gap-3">
+        <span class="average-time__heading d-flex align-items-center justify-content-between w-100">
+            <label class="title"><b>Average</b></label>
+            <div class="all-days"><b>All days</b></div>
+        </span>
+        <span class="average-time__details d-flex justify-content-between align-items-baseline" *ngIf="!isEdit">
+            <label class="time"><b>{{prepTime}} Mins</b></label>
+            <a (click)="isEdit = true; updatedPrepTime = prepTime" matTooltip="Edit Prep-Time" matTooltipClass="custom-tooltip" matTooltipPosition="below"><b><img src="assets/icons/edit-icon.svg" alt=""> Edit</b></a>
+        </span>
+        <span class="d-flex justify-content-between align-items-baseline" *ngIf="isEdit">
+            <mat-form-field class="w-100" appearance="outline">
+                <input matInput [(ngModel)]="updatedPrepTime" type="text" placeholder="Enter prep Time" (keydown.enter)="editPrepTime()">
+            </mat-form-field>
+            <div class="d-flex">
+                <button mat-button class="buttons active-button me-3 ms-3" (click)="editPrepTime()">Apply</button>
+                <button mat-button class="buttons" (click)="isEdit= false">cancel</button>
+            </div>
+        </span>
+    </div>
+</div>

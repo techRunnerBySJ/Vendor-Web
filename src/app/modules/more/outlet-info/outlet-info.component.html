@@ -1,0 +1,228 @@
+<div class="d-flex align-items-baseline">
+    <mat-icon class="fs-5 fw-bold ms-3 cursor-enabled" [routerLink]="'/more'" matTooltip="Go to more page">keyboard_arrow_left</mat-icon>
+    <label class="fs-3 fw-bold">Outlet Info</label>
+  </div>
+<div class="outlet-info-container mb-3 w-50 ms-5 mt-2">
+
+    <!-- main section containing all the features -->
+    <!-- finance details -->
+    <div class="">
+        <label class="heading"><b>Finance</b></label>
+        <div class="finance w-100 mt-3">
+            <span class="finance__finance-details d-flex w-100 justify-content-between align-items-baseline">
+                <div class="details d-flex w-100 align-items-center">
+                    <label class="title w-25"><b>{{fssaiText}}</b></label>
+                    <span class="status ms-2"><b>Available</b></span>
+                </div>
+                <a (click)="viewFile(fssaiUrl)">VIEW</a>
+            </span>
+            <span class="finance__finance-details d-flex w-100 justify-content-between align-items-baseline border-0">
+                <div class="details d-flex w-100 align-items-center mt-2">
+                    <label class="title w-25"><b>GST Category:</b>
+                         <p class="text-uppercase text-muted fw-bold">{{gstCategory}}</p></label>
+                    <span class="status"><b>{{gstUrl ? 'Available' : 'Not Available'}}</b></span>
+                </div>
+                <a (click)="viewFile(gstUrl)" *ngIf="gstUrl">VIEW</a>
+            </span>
+        </div>
+
+        <!-- Delivery Charges -->
+        <ng-container *ngIf="isDeliveryChargesPaidByOutlet">
+            <label class="heading mt-4"><strong>Delivery Charges</strong></label>
+            <div class="delivery-charges mt-3">
+                <strong>Min Order Value for Free Delivery By Outlet:  </strong> &#8377;{{minOrderValForFreeDeliveryByOutlet}}
+            </div>
+        </ng-container>
+
+        <!-- <label class="heading mt-4"><strong>Delivery Charges Paid By</strong></label>
+        <div class="delivery-charges mt-3">
+            <span class="d-flex justify-content-between align-items-center" *ngIf="!isEditDeliveryCharges">
+                <label class="title">{{deliveryChargesPaidBy}}</label>
+                <a (click)="onEditDeliveryChargesPaidBy()"><b><img src="assets/icons/edit-icon.svg" alt=""> Edit</b></a>
+            </span>
+            <span class="d-flex justify-content-between align-items-center ps-3" *ngIf="isEditDeliveryCharges">
+                <div class="radio-btn">
+                    <input type="radio" [value]="false" name="slotSelection" [(ngModel)]="freeDelivery">
+                    <span>Customer</span>
+                </div>
+                <div class="radio-btn">
+                    <input type="radio" [value]="true" name="slotSelection" [(ngModel)]="freeDelivery">
+                    <span>Restaurant</span>
+                </div>
+                <div class="d-flex">
+                    <button mat-button class="buttons active-button me-3 ms-3" (click)="submitDeliveryChargesPaidBy()">Apply</button>
+                    <button mat-button class="buttons" (click)="isEditDeliveryCharges = false">cancel</button>
+                </div>
+            </span>
+        </div> -->
+        <!-- account settings details -->
+        <label class="heading mt-4"><b>Account</b></label>
+        <div class="account-settings w-100 mt-3">
+            <span class="account-settings__details d-flex justify-content-between align-items-center">
+                <label class="title"><b>Account Settings</b></label>
+                <a (click)="toggleChangePasswordModal()"><b><img src="assets/icons/edit-icon.svg" alt=""> CHANGE PASSWORD</b></a>
+            </span>
+        </div>
+
+        <!-- user details -->
+        <label class="heading mt-4" *ngIf="role === 'owner'"><b>Users</b></label>
+        <div class="user-info d-flex flex-column" *ngIf="role === 'owner'">
+            <span class="manage-user w-100 d-flex justify-content-between">
+                <label class="title"><b>Manage Users</b></label>
+                <button mat-button class="buttons active-button" (click)="openInviteUserModal()">
+                    <img class="align-text-top me-2" src="assets/icons/invite-icon.svg" alt="invite icon">INVITE
+                </button>
+            </span>
+            <div class="user d-flex flex-column w-100" *ngFor="let user of outletUsersList">
+                <div class="d-flex justify-content-between align-items-baseline">
+                    <span class="status d-flex align-items-center"><input class="me-3" type="checkbox" role="switch"
+                            name="toggle" [ngClass]="{'on' : user.isActive}" (click)="changeUserActiveStatus(user)">
+                        <b>{{user.isActive ? 'ACTIVE' : 'IN-ACTIVE'}}</b>
+                    </span>
+                    <span><a (click)="openEditUserModal(user)"><img src="assets/icons/edit-icon.svg" alt=""> EDIT</a> /
+                        <a (click)="deleteUser(user)"><img src="assets/icons/delete.svg" alt=""> DELETE</a></span>
+                </div>
+                <span class="user__details">
+                    <div class="name-designation d-flex justify-content-between">
+                        <label class="name"><b>{{user.userName}}</b></label>
+                        <span class="designation">{{user.userRole}}</span>
+                    </div>
+                    <div class="phone-email d-flex flex-column">
+                        <span class="phone d-flex justify-content-between">
+                            <img class="me-2" src="assets/icons/telephone-grey-icon.svg"
+                                alt="telephone icon"><label>{{user.userPhone}}</label>
+                        </span>
+                        <span class="phone d-flex justify-content-between">
+                            <img class="me-2" src="assets/icons/mail-icon.svg"
+                                alt="mail icon"><label>{{user.userEmail}}</label>
+                        </span>
+                    </div>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Change Password Modal -->
+<div class="modal hide drawer right-align" id="changePasswordModalRight" role="dialog"
+    aria-labelledby="changePasswordModalLabel" aria-hidden="true" *ngIf="changePassword">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label class="modal-title border-0" id="exampleModalLabel">Change Password</label>
+                <mat-icon (click)="toggleChangePasswordModal()" data-dismiss="modal">close</mat-icon>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="updatePasswordForm">
+                    <div class="input-details">
+                        <label class="input-heading" for="password">Old Password</label>
+                        <div class="input-password-field">
+                            <mat-form-field class="custom-password-field" appearance="outline">
+                                <input matInput formControlName="userOldPassword"
+                                    [type]="fieldTextTypeForOldPassword ? 'text' : 'password'"
+                                    placeholder="Enter old password" />
+                                <mat-icon *ngIf="oldPasswordControlContainsData()" matSuffix
+                                    (click)="fieldTextTypeForOldPassword = !fieldTextTypeForOldPassword">{{fieldTextTypeForOldPassword
+                                    ? 'visibility_off' : 'visibility'}}
+                                </mat-icon>
+                            </mat-form-field>
+                            <app-form-error-msg [control]="updatePasswordForm.controls.userOldPassword">
+                            </app-form-error-msg>
+                        </div>
+                    </div>
+                    <div class="input-details mt-3">
+                        <label class="input-heading" for="password">New Password</label>
+                        <div class="input-password-field">
+                            <mat-form-field class="custom-password-field" appearance="outline">
+                                <input matInput formControlName="userNewPassword"
+                                    [type]="fieldTextTypeForNewPassword ? 'text' : 'password'"
+                                    placeholder="Enter new password" />
+                                <mat-icon *ngIf="newPasswordControlContainsData()" matSuffix
+                                    (click)="fieldTextTypeForNewPassword = !fieldTextTypeForNewPassword">{{fieldTextTypeForNewPassword
+                                    ? 'visibility_off' : 'visibility'}}
+                                </mat-icon>
+                            </mat-form-field>
+                            <app-form-error-msg [control]="updatePasswordForm.controls.userNewPassword">
+                            </app-form-error-msg>
+                        </div>
+                    </div>
+
+                    <div class="input-details mt-3">
+                        <label class="input-heading" for="password">Re-enter New Password</label>
+                        <div class="input-password-field">
+                            <mat-form-field class="custom-password-field" appearance="outline">
+                                <input matInput formControlName="userRepeatNewPassword" type="password"
+                                    placeholder="Re-enter new password" />
+                            </mat-form-field>
+                            <app-form-error-msg [control]="updatePasswordForm.controls.userRepeatNewPassword">
+                            </app-form-error-msg>
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-3">
+                        <button mat-button type="button" class="buttons active-button w-100 h-3"
+                            (click)="updatePassword()">
+                            UPDATE
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Details Modal -->
+<div class="modal hide drawer right-align" id="userDetailsModalRight" role="dialog"
+    aria-labelledby="userDetailsModalLabel" aria-hidden="true" *ngIf="showUserDetailsModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label class="modal-title border-0" id="exampleModalLabel">{{isNewUser ? 'Add New User' : 'Edit
+                    User'}}</label>
+                <mat-icon (click)="toggleUserDetailsModal()" data-dismiss="modal">close</mat-icon>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="userDetailsForm">
+                    <div class="input-details">
+                        <label class="input-heading" for="email">NAME</label>
+                        <div class="input-name-field">
+                            <mat-form-field class="custom-email-field" appearance="outline">
+                                <input matInput formControlName="userName" type="text" placeholder="Enter Name" />
+                            </mat-form-field>
+                            <app-form-error-msg [control]="userDetailsForm.controls.userName"></app-form-error-msg>
+                        </div>
+                    </div>
+                    <div class="input-details mt-3">
+                        <label class="input-heading" for="email">EMAIL</label>
+                        <div class="input-email-field">
+                            <mat-form-field class="custom-email-field" appearance="outline">
+                                <input matInput formControlName="userEmail" type="email" placeholder="Enter Email" />
+                            </mat-form-field>
+                            <app-form-error-msg [control]="userDetailsForm.controls.userEmail"></app-form-error-msg>
+                        </div>
+                    </div>
+                    <div class="input-details mt-3">
+                        <label class="input-heading" for="contact">CONTACT NO</label>
+                        <div class="input-contact-field">
+                            <mat-form-field class="custom-contact-field" appearance="outline">
+                                <input matInput formControlName="userPhone" type="text"
+                                    placeholder="Enter Contact No" />
+                            </mat-form-field>
+                            <app-form-error-msg [control]="userDetailsForm.controls.userPhone"></app-form-error-msg>
+                        </div>
+                    </div>
+
+                    <div class="input-details mt-3">
+                        <label class="input-heading" for="contact">ROLE</label>
+                        <ng-select [items]="roles" placeholder="Select Role" formControlName="userRole"></ng-select>
+                        <app-form-error-msg [control]="userDetailsForm.controls.userRole"></app-form-error-msg>
+                    </div>
+                    <div class="modal-footer mt-3">
+                        <button type="button" mat-button type="button" class="buttons active-button w-100 h-3"
+                            (click)="submitUserDetails()">
+                            {{isNewUser ? 'ADD' : 'SAVE CHANGES'}}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

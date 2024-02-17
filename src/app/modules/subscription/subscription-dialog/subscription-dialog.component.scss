@@ -1,0 +1,15 @@
+.dialog-wrapper {
+    margin: 0 auto;
+    padding: 2em;
+    width: 400px;
+    .reason {
+        padding: 1.25em 1.25em 0.7em;
+        border-radius: 12px;
+        border: 1px solid #e7ecef;
+        color: #6D7E8B;
+        width: 100%;
+        min-height: 6em;
+        font-size: 14px;
+        background-color: #F2F5F8;
+    }
+}

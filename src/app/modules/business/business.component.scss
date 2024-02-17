@@ -1,0 +1,225 @@
+$text-capitalize: capitalize;
+$primary-color: #6d7e8b;
+$secondary-color: #0d1d28;
+$bg-color: #e7ecef;
+.business-wrapper {
+    padding: 0 7.5rem;
+    @media only screen and (min-device-width: 1025px) and (max-device-width: 1500px) {
+        padding: 0;
+    }
+    &__header {
+        text-transform: $text-capitalize;
+        font-size: 2em;
+        margin: 0 0 0.5em 2.5em;
+    }
+    &__content {
+        grid-gap: 2rem;
+        .left-container,
+        .right-container {
+            width: 40%;
+            @media only screen and (min-device-width: 1025px) and (max-device-width: 1500px) {
+                width: 45%;
+            }
+            .reports,
+            .customer-reviews,
+            .discounts,
+            .payouts,
+            .poc {
+                background-color: #fff;
+                border-radius: 12px;
+                padding: 1.25em;
+                margin-bottom: 2em;
+                //common css for each section header
+                .section-header {
+                    color: $primary-color;
+                    font-size: 14px;
+                    letter-spacing: 1px;
+                    span:nth-child(1) {
+                        font-size: 24px;
+                        color: $secondary-color;
+                        text-transform: $text-capitalize;
+                    }
+                    span:nth-child(2) {
+                        cursor: pointer;
+                    }
+                }
+                //common css for card
+                .cards {
+                    margin-top: 1.25em;
+                    padding: 1.25em;
+                    border-radius: 12px;
+                    border: 1px solid $bg-color;
+                }
+                // common css for mouse drag in sales and discount
+                .cursor-grabbing {
+                    cursor: grabbing !important;
+                }
+            }
+            .reports {
+                .duration-types {
+                    margin-top: 1.25em;
+                    color: #8d9da8;
+                    letter-spacing: 1px;
+                    overflow: auto;
+                    text-transform: uppercase;
+                    cursor: grab;
+                    &::-webkit-scrollbar {
+                        display: none;
+                    }
+                    span {
+                        margin-right: 2em;
+                        cursor: pointer;
+                        white-space: nowrap;
+                    }
+                    .active-duration-type {
+                        color: $secondary-color;
+                    }
+                }
+                .report-details {
+                    border-bottom: 1px solid $bg-color;
+                    p {
+                        font-size: 24px;
+                    }
+                }
+                .insights {
+                    .header {
+                        line-height: 2.5em;
+                        font-weight: 600;
+                    }
+                    .chart {
+                        height: 200px;
+                        .bar {
+                            border-radius: 9px;
+                            background-color: #FCD400;
+                            width: 15px;
+                        }
+                        .card-content {
+                            color: $primary-color;
+                            // margin-top: 12px;
+                            font-size: 12px;
+                        }
+                    }
+                }
+            }
+            .customer-reviews {
+                .card-heading {
+                    .customer-details {
+                        font-size: 14px;
+                        .customer-dp {
+                            border-radius: 50%;
+                            margin-right: 0.5em;
+                        }
+                        h6 {
+                            margin: 8px 0 0;
+                            color: $secondary-color;
+                        }
+                        span {
+                            color: #50616e;
+                        }
+                    }
+                    .customer-id {
+                        background-color: #f2f5f8;
+                        border: 1px solid #d2d9de;
+                        border-radius: 4px;
+                        height: fit-content;
+                        color: $secondary-color;
+                        font-size: 14px;
+                        padding: 4px 8px;
+                    }
+                }
+                mat-icon {
+                    margin-top: 12px;
+                    color: #FCD400;
+                }
+                .card-content {
+                    color: $primary-color;
+                    font-size: 18px;
+                    word-break: break-word;
+                }
+            }
+            .discounts {
+                .offer-links {
+                    margin-top: 1.25em;
+                    color: #8d9da8;
+                    letter-spacing: 1px;
+                    font-size: 14px;
+                    overflow: auto;
+                    cursor: grab;
+                    &::-webkit-scrollbar {
+                        display: none;
+                    }
+                    span {
+                        margin-right: 2em;
+                        cursor: pointer;
+                        white-space: nowrap;
+                    }
+                    .active-offer-link {
+                        color: $secondary-color;
+                    }
+                }
+                .offer-code {
+                    width: fit-content;
+                    background-color: #fdf2cc;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    border: 2px dashed #fcd400;
+                    color: $secondary-color;
+                    text-transform: uppercase;
+                }
+                .offer-color--grey {
+                    color: $primary-color;
+                }
+                .offer-action {
+                    background-color: $bg-color;
+                    border-radius: 6px;
+                    letter-spacing: 2px;
+                    color: $secondary-color;
+                    font-size: 12px;
+                    text-transform: uppercase;
+                }
+                .offer-more-details {
+                    font-family: inherit;
+                    margin: 0;
+                }
+            }
+            .payouts {
+                p {
+                    color: $primary-color;
+                    text-transform: $text-capitalize;
+                }
+                .green-card {
+                    width: 45%;
+                    background-color: rgba(207, 238, 228, 0.5);
+                    border: none;
+                }
+                .red-card {
+                    width: 45%;
+                    background-color: rgba(251, 228, 208, 0.5);
+                    border: none;
+                }
+            }
+            .poc {
+                .poc-contact-number {
+                    color: $secondary-color;
+                    text-transform: $text-capitalize;
+                    font-size: 18px;
+                }
+                .poc-desc {
+                    color: $primary-color;
+                    margin: 0;
+                }
+            }
+        }
+    }
+}
+
+.text-area {
+    padding: 1.25em 1.25em 0.7em;
+    border-radius: 12px;
+    border: 1px solid #e7ecef;
+    color: #6d7e8b;
+    width: 100%;
+    min-height: 6em;
+    font-size: 14px;
+    background-color: #f2f5f8;
+}

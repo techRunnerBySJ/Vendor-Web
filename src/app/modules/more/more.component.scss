@@ -1,0 +1,166 @@
+$background-color: #ffffff;
+$circleHeight: 14rem;
+$circleWidth: 14rem;
+$radius: 195px;
+$shadow: 0 0 10px 0 rgba(255, 255, 255, 0.35);
+$fontColor: rgb(250, 250, 250);
+@mixin object-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.more-container {
+    padding: 0 7.5rem;
+    @media only screen and (min-device-width: 1025px) and (max-device-width: 1500px) {
+        padding: 0 1.5rem;
+    }
+    header {
+        font-size: 36px;
+        .advanced-features {
+            grid-gap: 1em;
+            p {
+                font-size: 22px;
+                line-height: 51px;
+            }
+        }
+    }
+    .main {
+        padding: 1.5em;
+        background-color: $background-color;
+        border-radius: 25px;
+        margin-top: 2rem;
+        width: 55rem;
+        min-height: 17rem;
+        max-height: fit-content;
+        .carousel-container {
+            z-index: 0;
+        }
+        &__username {
+            color: #000000;
+            .other-user-details {
+                h6 {
+                    color: #000000;
+                    font-weight: 600;
+                }
+                span {
+                    height: 3.8em;
+                    border-radius: 7px;
+                    background: #f2f5f8;
+                    color: black;
+                    font-size: 11.5px;
+                    font-weight: 600;
+                    padding: 1em;
+                }
+                label,
+                p {
+                    font-size: 16px;
+                }
+                .edit-image {
+                    cursor: pointer;
+                }
+            }
+            @media screen and (min-width: 1250px) and (max-width: 1600px) {
+                width: 63%;
+            }
+        }
+    }
+    .outlet-detail {
+        padding: 2.5rem;
+        border-radius: 20px;
+        background-color: #ffffff;
+        width: 55rem;
+        .prep-time {
+            background-color: rgba(255, 238, 238, 0.75);
+            border-radius: 8px;
+            height: 180px;
+            width: 250px;
+            cursor: pointer;
+        }
+        .outlet-info {
+            background-color: rgba(237, 253, 255, 0.9);
+            border-radius: 8px;
+            height: 180px;
+            width: 250px;
+            cursor: pointer;
+        }
+        .slot-time {
+            background-color: rgba(249, 241, 255, 0.72);
+            border-radius: 8px;
+            height: 180px;
+            width: 250px;
+            cursor: pointer;
+        }
+    }
+    /*Services Styles*/
+    .services {
+        grid-gap: 1rem;
+        background-color: $background-color;
+        border-radius: 25px;
+        &__box {
+            width: 17.625rem;
+            height: 9.438rem;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        &__prep-time {
+            background-color: #ffeeee;
+        }
+        &__bill-printer-settings {
+            background-color: #edfdff;
+        }
+        &__outlet-info {
+            background-color: #f9f1ff;
+        }
+        &__riders {
+            background-color: #e5fff0;
+        }
+        &__printer-faqs {
+            background-color: #ebf5ff;
+        }
+        &__help-center {
+            background-color: #fffaec;
+        }
+        &__content {
+            padding: 2.6em;
+            .logo-title {
+                grid-gap: 0.85em;
+                h6 {
+                    color: #50616e;
+                }
+            }
+        }
+    }
+}
+
+.modal {
+    .add-icon {
+        font-size: 17px;
+        margin: 0;
+        gap: 0.5rem;
+        border-radius: 5px;
+        background-color: #fcd401;
+        width: fit-content;
+        padding: 0.2rem 1rem;
+        cursor: pointer;
+        color: #000000;
+        margin-top: 0.5rem;
+    }
+    .edit-primary-image-icon {
+        position: absolute;
+        left: 264px;
+        top: 10px;
+        color: #fff;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .edit-additional-image-icon {
+        left: 225px !important;
+    }
+}

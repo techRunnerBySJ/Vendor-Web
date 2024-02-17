@@ -1,0 +1,39 @@
+<section class="dialog-wrapper">
+    <ng-container *ngIf="action === subscriptionAction.Cancel">
+        <h2>Describe your reason</h2>
+        <textarea [formControl]="cancellationReason" class="reason" placeholder="type here..."></textarea>
+        <app-form-error-msg [control]="cancellationReason"></app-form-error-msg>
+        <div class="d-flex gap-3 mt-3">
+            <button class="buttons buttons--white w-100" mat-button (click)="onDismiss()">Dismiss</button>
+            <button class="buttons active-button w-100 mb-2" mat-button (click)="onConfirm()"> Continue</button>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="action === subscriptionAction.RetryPayment">
+        <h4>Next Payment On (Optional)</h4>
+        <form [formGroup]="retryPaymentForm" class="row">
+            <div class="input-details col-6">
+                <label class="input-heading">Date</label>
+                <mat-form-field appearance="outline">
+                    <input matInput formControlName="date" (click)="customDate.open()" [min]="currentDate" [matDatepicker]="customDate" [readonly]="true" name="date" placeholder="Select date" ngDefaultControl>
+                    <mat-datepicker-toggle [for]="customDate" matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #customDate></mat-datepicker>
+                </mat-form-field>
+                <app-form-error-msg [control]="retryPaymentForm.controls.date"></app-form-error-msg>
+            </div>
+            <div class="input-details col-6">
+                <label class="input-heading">Time</label>
+                <mat-form-field appearance="outline">
+                    <input matInput type="text" [ngxTimepicker]="customTime" readonly name="time" formControlName="time" placeholder="Select time">
+                    <ngx-material-timepicker-toggle matSuffix [for]="customTime" matSuffix></ngx-material-timepicker-toggle>
+                    <ngx-material-timepicker #customTime></ngx-material-timepicker>
+                </mat-form-field>
+                <app-form-error-msg [control]="retryPaymentForm.controls.time"></app-form-error-msg>
+            </div>
+            <div class="d-flex gap-3 mt-3">
+                <button class="buttons buttons--white w-100" mat-button (click)="onDismiss()">Dismiss</button>
+                <button class="buttons active-button w-100 mb-2" mat-button (click)="onConfirm()"> Continue</button>
+            </div>
+        </form>
+    </ng-container>
+</section>

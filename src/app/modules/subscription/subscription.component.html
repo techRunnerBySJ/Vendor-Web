@@ -1,0 +1,13 @@
+
+<section class="subscription-wrapper">
+    <h2 class="mb-4">
+        <strong>Subscription</strong>
+    </h2>
+    <main class="subscription-wrapper__content">
+        <a class="nav-links cursor-enabled" 
+            [ngClass]="{'active-nav-link': currentRoute === link.route || (currentRoute === 'subscription' && link.route === 'subscription/plans')}" 
+            (click)="navigateToSubscriptionRoutes(link.route)"
+            *ngFor="let link of subscriptionNavLinks"><strong>{{link.name}}</strong></a>
+        <router-outlet></router-outlet>
+    </main>
+</section>

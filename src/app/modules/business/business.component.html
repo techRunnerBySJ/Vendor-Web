@@ -1,0 +1,399 @@
+<div class="business-wrapper w-100">
+    <header class="business-wrapper__header">
+        <b>business report</b>
+    </header>
+
+    <main class="business-wrapper__content d-flex justify-content-evenly">
+        <div class="left-container">
+
+            <!-- Reports Block -->
+            <section class="reports">
+                <div class="duration-types mb-3" [ngClass]="{'cursor-grabbing': mouseDrag.isDown}" (mouseleave)="stopDragging()" (mouseup)="stopDragging()" (mousedown)="onMouseDown($event, 'sales')" (mousemove)="onMouseMove($event, 'sales')" #salesDurationSlider>
+                    <span (click)="salesReportDurationChange('today')" [ngClass]="{'active-duration-type': salesReportDurationType === 'today'}">
+                        <strong>today</strong>
+                    </span>
+                    <span (click)="salesReportDurationChange('this_week')" [ngClass]="{'active-duration-type': salesReportDurationType === 'this_week'}">
+                        <strong>this week</strong>
+                    </span>
+                    <span (click)="salesReportDurationChange('this_month')" [ngClass]="{'active-duration-type': salesReportDurationType === 'this_month'}">
+                        <strong>this month</strong>
+                    </span>
+                    <span (click)="salesReportDurationChange('custom_range')" [ngClass]="{'active-duration-type': salesReportDurationType === 'custom_range'}">
+                        <strong>custom</strong>
+                    </span>
+                </div>
+
+                <section class="row align-items-center mb-3" *ngIf="showCustomDateFilterFields">
+                    <div class="col-6">
+                        <mat-form-field appearance="outline">
+                            <input matInput (click)="fromDate.open()" [matDatepicker]="fromDate" [readonly]="true" name="fromDate" [(ngModel)]="filterSalesReportByStartTime" [max]="currentDate" placeholder="Start Date">
+                            <mat-datepicker-toggle matSuffix [for]="fromDate"></mat-datepicker-toggle>
+                            <mat-datepicker #fromDate></mat-datepicker>
+                            <button mat-icon-button matSuffix *ngIf="filterSalesReportByStartTime" (click)="resetFilterControls('date')">
+                                <mat-icon>clear</mat-icon>
+                            </button>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-6">
+                        <mat-form-field appearance="outline">
+                            <input matInput (click)="toDate.open()" [matDatepicker]="toDate" [readonly]="true" name="toDate" [(ngModel)]="filterSalesReportByEndTime" [min]="filterSalesReportByStartTime" [max]="currentDate" placeholder="End Date">
+                            <mat-datepicker-toggle matSuffix [for]="toDate"></mat-datepicker-toggle>
+                            <mat-datepicker #toDate></mat-datepicker>
+                            <button mat-icon-button matSuffix *ngIf="filterSalesReportByEndTime" (click)="resetFilterControls('date')">
+                                <mat-icon>clear</mat-icon>
+                            </button>
+                        </mat-form-field>
+                    </div>
+                    <div class="input-details col-6">
+                        <mat-form-field appearance="outline">
+                            <input matInput type="time" name="startTime" [(ngModel)]="startTime" placeholder="Select Start Time">
+                            <button mat-icon-button matSuffix *ngIf="startTime" (click)="resetFilterControls('startTime')">
+                                <mat-icon>clear</mat-icon>
+                            </button>
+                        </mat-form-field>
+                    </div>
+                    <div class="input-details col-6">
+                        <mat-form-field appearance="outline">
+                            <input matInput type="time" name="endTime" [(ngModel)]="endTime" placeholder="Select End Time">
+                            <button mat-icon-button matSuffix *ngIf="endTime" (click)="resetFilterControls('endTime')">
+                                <mat-icon>clear</mat-icon>
+                            </button>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-12 text-end">
+                        <button class="buttons active-button mt-2" mat-button (click)="getSalesData()">apply</button>
+                    </div>
+                </section>
+
+                <div class="report-details d-flex justify-content-between align-items-center">
+                    <p class="m-0" *ngIf="totalSalesAmount !== null"> &#8377; {{totalSalesAmount}}</p>
+                    <span class="pull-right" *ngIf="salesReportStartTime">{{salesReportStartTime}}
+                        <ng-container *ngIf="salesReportDurationType !== 'today'">-
+                            {{salesReportEndTime}}</ng-container>
+                    </span>
+                </div>
+                <div class="insights mt-3">
+                    <span class="header">Insights</span>
+                    <div class="chart d-flex w-100 justify-content-between align-items-end mt-3">
+                        <p class="d-flex justify-content-center align-items-center w-100" *ngIf="!isCustomDateRangeSelected && salesReportDurationType === 'custom_range'">
+                            <ng-container *ngTemplateOutlet="kindlySelectDateRange">
+                            </ng-container>
+                        </p>
+                        <span class="d-flex flex-column align-items-center justify-content-end gap-2 h-100" *ngFor="let sale of salesReportList">
+                            <span class="bar" matTooltip="Orders: {{sale.ordersCount ? sale.ordersCount : 0}}"
+                                matTooltipClass="custom-tooltip" [matTooltipPosition]="'above'"
+                                [ngStyle]="{height: (sale.barHeight) + '%' }">
+                            </span>
+                        <label class="card-content">{{sale.displayDate}}</label>
+                        <label><strong>&#8377; {{sale.totalVendorSalesAmount ? sale.totalVendorSalesAmount :
+                                    0}}</strong></label>
+                        </span>
+                    </div>
+
+
+                </div>
+            </section>
+
+            <!-- Customer-Review Block -->
+            <section class="customer-reviews">
+                <header class="section-header d-flex justify-content-between align-items-center text-uppercase">
+                    <span><img class="me-3" src="assets/icons/customer-reviews-icon.svg"
+                            alt="customer-review icon"><b>Customer Reviews</b></span>
+                    <span class="d-flex align-items-start gap-2"> <b class="h5 ms-2 text-success">{{totalCustomerLikeCount}}</b><img src="assets/icons/total-like-icon.svg" alt="">
+                        <b class="h5 ms-2 text-success">{{totalCustomerDislikeCount}}</b><img src="assets/icons/total-dislike-icon.svg" alt="">
+                    </span>
+                </header>
+
+                <ng-container *ngIf="customerReviewsList.length;else noDataFound">
+                    <div class="cards cursor-enabled" (click)="openOrderDetailsModal(review.orderId)" *ngFor="let review of customerReviewsList| paginate: {itemsPerPage: 4,  currentPage: currentCustomerReviewsPage,totalItems: totalCustomerReviewsCount };let i=index">
+                        <div class="card-heading d-flex justify-content-between">
+                            <div class="customer-details d-flex">
+                                <img class="customer-dp" height="50" width="50" src="assets/delivery-partner.png" alt="profile-icon">
+                                <div>
+                                    <h6><b>{{review.customerName}}</b> </h6>
+                                    <span>{{review.orderReviewedTime | date: 'd MMM y h:mm a'}}</span>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="customer-id">Order ID: {{review.orderId}}  
+                                </div>
+                                <img class="me-2" src='{{"assets/icons/"+ review.voteType +"-icon.svg"}}' alt="" width="20" height="20"> 
+                                <!-- <span class="text-capitalize">{{review.voteType}}</span>  -->
+                            </div>
+                           
+                        </div>
+                        <div class="card-content">
+                            {{review.orderReviewComments}}
+                        </div>
+                    </div>
+                    <pagination-controls (pageChange)="currentCustomerReviewsPage = $event;getCustomerReviewsData()"></pagination-controls>
+                </ng-container>
+            </section>
+        </div>
+
+        <div class="right-container">
+
+            <!-- Discounts Block -->
+            <section class="discounts">
+                <header class="section-header d-flex justify-content-between align-items-center text-uppercase">
+                    <span><img class="me-3" src="assets/icons/discounts-icon.svg"
+                            alt="discounts icon"><b>Discounts</b></span>
+                            
+                        
+                    <button class="buttons active-button mx-0" mat-button (click)="openAddNewDiscountModal()">
+                        <b>add</b> </button>
+                </header>
+                <div class="offer-links text-uppercase" [ngClass]="{'cursor-grabbing': mouseDrag.isDown}" (mouseleave)="stopDragging()" (mouseup)="stopDragging()" (mousedown)="onMouseDown($event, 'discounts')" (mousemove)="onMouseMove($event, 'discounts')" #discountTabSlider>
+                    <ng-container *ngFor="let tab of discountTabsList">
+                        <span [ngClass]="{'active-offer-link' : currentDiscountTab === tab}" (click)="toggleDiscountTabs(tab)"><b>{{tab}}</b></span>
+                    </ng-container>
+                </div>
+
+                
+                <div *ngIf="discountsData[currentDiscountTab].length;else noDataFound">
+                    <div class="text-end mt-3" *ngIf="[DiscountTabs.Ongoing, DiscountTabs.Upcoming].includes(currentDiscountTab)">
+                        <span class="text-decoration-underline cursor-enabled me-3" mat-button 
+                            (click)="openDiscountSequenceDialog()"
+                            *ngIf="currentDiscountTab === DiscountTabs.Ongoing">
+                            <strong>Sequence</strong>
+                        </span>
+                        <span class="text-decoration-underline cursor-enabled" (click)="optOutFromAllDiscounts(discountsData[currentDiscountTab])">
+                            <strong>Opt out all</strong>
+                        </span>
+                    </div>
+                   
+                    <div class="cards cursor-enabled" *ngFor="let discount of discountsData[currentDiscountTab] |
+                         paginate: {id: 'discountPage',itemsPerPage: 4,  currentPage: currentDiscountsPage,
+                         totalItems: discountsData[currentDiscountTab].length }" (click)="openDiscountDetailsDialog(discount)">
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <p class="offer-code mb-2"><strong>{{discount.couponName}}</strong></p>
+                            <button mat-button class="offer-action" (click)="optin(discount);$event.stopPropagation()" *ngIf="currentDiscountTab === DiscountTabs.NewAvailable"><strong> opt in</strong>
+                            </button>
+                            <button mat-button class="offer-action" (click)="optoutFromAllMappings(discount.mappingDetails);$event.stopPropagation()" *ngIf="[DiscountTabs.Ongoing, DiscountTabs.Upcoming].includes(currentDiscountTab)"><strong>
+                                    OPT OUT</strong>
+                            </button>
+                        </div>
+
+                        <ng-container>
+                            <span class="offer-color--grey" *ngIf="currentDiscountTab === DiscountTabs.NewAvailable; else otherDiscountTabs">
+                                <strong>{{discount.couponStartTime}} - {{discount.couponEndTime}}</strong>
+                            </span>
+                            <ng-template #otherDiscountTabs>
+                                <span class="offer-color--grey">
+                                    <strong>{{discount.mappingDetails[0].startDate}} -
+                                        {{discount.mappingDetails[0].endDate}}</strong>
+                                </span>
+                            </ng-template>
+                            <p class="offer-color--grey m-0">{{discount.couponHeader}}</p>
+                        </ng-container>
+                        <!-- <div class="d-flex justify-content-start">
+                            <button mat-button class="offer-action mt-3" *ngIf="currentDiscountTab === DiscountTabs.Ongoing"><strong> Mark As Primary</strong></button>
+                        </div> -->
+                    </div>
+                    <pagination-controls id="discountPage" (pageChange)="currentDiscountsPage = $event"></pagination-controls>
+                </div>
+            </section>
+
+            <!-- Payouts Block -->
+            <section class="payouts">
+                <header class="section-header d-flex justify-content-between align-items-center text-uppercase">
+                    <span><img class="me-3" src="assets/icons/payouts-icon.svg" alt="payouts icon"><b>payouts</b></span>
+                    <span (click)="navigateToViewPayoutsPage()"><b>View All</b></span>
+                </header>
+                <div class="d-flex justify-content-between" *ngIf="payoutSummary.lastPayoutAmount || payoutSummary.upcomingPayoutAmount; else noDataFound">
+                    <div class="cards" [ngClass]="{'green-card': true}" *ngIf="payoutSummary.lastPayoutAmount > 0">
+                        <p class="m-0"> Last </p>
+                        <div class="my-2">{{payoutSummary.lastPayoutStartDate | date: 'd MMM YY'}} - {{payoutSummary.lastPayoutEndDate | date: 'd MMM YY'}}</div>
+                        <span><b>&#8377; {{payoutSummary.lastPayoutAmount}}</b></span>
+                        <span class="status text-capitalize float-end" [ngClass]="{'status--green': greenStatusArray.includes(payoutSummary.lastPayoutStatus),
+                            'status--orange': orangeStatusArray.includes(payoutSummary.lastPayoutStatus),
+                            'status--red': redStatusArray.includes(payoutSummary.lastPayoutStatus)}">
+                            <img class="align-text-top me-1" src="assets/icons/green-tick-icon.svg" alt="paid icon"
+                                *ngIf="greenStatusArray.includes(payoutSummary.lastPayoutStatus)">
+                            <img width="16" height="16" class="align-text-top me-1"
+                                src="assets/icons/exclamation-icon.svg" alt="pending icon"
+                                *ngIf="orangeStatusArray.includes(payoutSummary.lastPayoutStatus)">
+                            <img width="16" height="16" class="align-text-top me-1"
+                                src="assets/icons/red-cross-icon.svg" alt="cancel icon"
+                                *ngIf="redStatusArray.includes(payoutSummary.lastPayoutStatus)">
+                            {{payoutSummary.lastPayoutStatus}}
+                        </span>
+                    </div>
+                    <div class="cards" [ngClass]="{'red-card': true}" *ngIf="payoutSummary.upcomingPayoutAmount > 0">
+                        <p class="m-0"> Upcoming </p>
+                        <div class="my-2">{{payoutSummary.upcomingPayoutStartDate | date: 'd MMM'}} - {{payoutSummary.upcomingPayoutEndDate | date: 'd MMM'}}</div>
+                        <span><b>&#8377; {{payoutSummary.upcomingPayoutAmount}}</b></span>
+                        <span class="status text-capitalize float-end" [ngStyle]="{color:  '#EA7407', 'background-color': 'rgba(234, 116, 7, 0.1)' }">
+                            <img src="assets/icons/exclamation-icon.svg" width="16" height="16" />
+                            pending
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- POC Block -->
+            <section class="poc">
+                <header class="section-header d-flex justify-content-between align-items-center text-uppercase">
+                    <span><img class="me-3" src="assets/icons/poc-icon.svg" alt="poc icon"><b>POC</b></span>
+                </header>
+
+                <div class="cards">
+                    <p class="poc-desc"> <b>Customer Service Contact Number</b></p>
+
+                    <p class="poc-contact-number"> <b>+91 - {{customerServiceContactNumber}}</b></p>
+                
+                <p class="m-0">
+                    <b>
+                        <a href="mailto:customercare@speedyy.com"
+                            class="text-uppercase section-header text-decoration-none w-100 d-flex justify-content-start align-items-center"><mat-icon
+                                class="me-2"> email</mat-icon>Contact us</a>
+                    </b>
+                </p>
+            </div>
+            </section>
+            
+        </div>
+    </main>
+</div>
+
+<!-- Add new discount modal -->
+<div class="modal hide drawer right-align" id="orderDetailsModalRight" role="dialog" aria-labelledby="orderDetailsModalLabel" aria-hidden="true" *ngIf="showAddnewDiscountModal">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label class="modal-title border-0" id="exampleModalLabel">Add New Discount</label>
+                <mat-icon (click)="closeAddNewDiscountModal()" data-dismiss="modal">close</mat-icon>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="addNewDiscountForm">
+                    <div class="input-details">
+                        <label class="input-heading">Discount Code</label>
+                        <mat-form-field appearance="outline">
+                            <input type="text" matInput name="couponName" formControlName="couponName" (input)="convertToUppercase($event)" placeholder="Enter Discount Code">
+                        </mat-form-field>
+                        <app-form-error-msg [control]="addNewDiscountForm.controls.couponName"></app-form-error-msg>
+                    </div>
+                    <div class="input-details mt-2">
+                        <label class="input-heading">Discount Header</label>
+                        <mat-form-field appearance="outline">
+                            <input type="text" matInput name="couponHeader" formControlName="couponHeader" placeholder="Enter Discount Header">
+                        </mat-form-field>
+                        <app-form-error-msg [control]="addNewDiscountForm.controls.couponHeader"></app-form-error-msg>
+                    </div>
+                    <div class="input-details">
+                        <label class="input-heading">Discount Description</label>
+                        <mat-form-field appearance="outline">
+                            <input type="text" matInput name="couponDesc" formControlName="couponDesc" placeholder="Enter Discount Description">
+                        </mat-form-field>
+                        <app-form-error-msg [control]="addNewDiscountForm.controls.couponDesc"></app-form-error-msg>
+                    </div>
+                    <div class="input-details">
+                        <label class="input-heading">Discount Terms & Conditions</label>
+                        <textarea formControlName="termsAndConditions" class="text-area" placeholder="Type here"></textarea>
+                        <app-form-error-msg [control]="addNewDiscountForm.controls.termsAndConditions"></app-form-error-msg>
+                    </div>
+                    <h6 class="mt-3 mb-0"><b>Discount Options</b></h6>
+                    <div class="input-details">
+                        <label class="input-heading">Discount Type</label>
+                        <ng-select id="area" name="discountType" formControlName="discountType" [items]="discountTypeOptions" placeholder="Select Option" bindValue="id" bindLabel="name" (change)="onDiscountTypeSelection()">
+                        </ng-select>
+                        <app-form-error-msg [control]="addNewDiscountForm.controls.discountType"></app-form-error-msg>
+                    </div>
+                    <div class="input-details">
+                        <label class="input-heading">{{isUptoDiscountType ? 'Discount (in %)' : 'Discount (in
+                            &#8377;)'}}</label>
+                        <mat-form-field appearance="outline">
+                            <input type="text" matInput name="discount" formControlName="discount" placeholder="Enter Discount Value" appAllowOnlyNumbers>
+                        </mat-form-field>
+                        <app-form-error-msg [control]="addNewDiscountForm.controls.discount"></app-form-error-msg>
+                    </div>
+                    <div class="input-details">
+                        <label class="input-heading">Minimum Order Value (in &#8377;)</label>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" placeholder="Enter Min Order Value" formControlName="minOrderValue" appAllowOnlyNumbers>
+                        </mat-form-field>
+                        <app-form-error-msg [control]="addNewDiscountForm.controls.minOrderValue"></app-form-error-msg>
+                    </div>
+                    <div class="input-details" *ngIf="isUptoDiscountType">
+                        <label class="input-heading">Maximum Discount Upto (in &#8377;)</label>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" placeholder="Enter Max Discount Upto" formControlName="maxDiscountUpto" appAllowOnlyNumbers>
+                        </mat-form-field>
+                        <app-form-error-msg [control]="addNewDiscountForm.controls.maxDiscountUpto"></app-form-error-msg>
+                    </div>
+                    <div class="row">
+                        <div class="input-details col-6">
+                            <label class="input-heading">Start Date</label>
+                            <mat-form-field appearance="outline">
+                                <input matInput formControlName="couponStartDate" (click)="startDate.open()" [matDatepicker]="startDate" [readonly]="true" name="startDate" placeholder="Select date" ngDefaultControl>
+                                <mat-datepicker-toggle [for]="startDate" matSuffix></mat-datepicker-toggle>
+                                <mat-datepicker #startDate></mat-datepicker>
+                            </mat-form-field>
+                            <app-form-error-msg [control]="addNewDiscountForm.controls.couponStartDate"></app-form-error-msg>
+                        </div>
+                        <div class="input-details col-6">
+                            <label class="input-heading">Start Time</label>
+                            <mat-form-field appearance="outline">
+                                <input matInput type="time" name="startTime" formControlName="couponStartTime" placeholder="Select time">
+                                <!-- <ngx-material-timepicker-toggle matSuffix [for]="startTime" matSuffix></ngx-material-timepicker-toggle>
+                                <ngx-material-timepicker #startTime [defaultTime]="currentTime"></ngx-material-timepicker> -->
+                            </mat-form-field>
+                            <app-form-error-msg [control]="addNewDiscountForm.controls.couponStartTime"></app-form-error-msg>
+                        </div>
+                        <div class="input-details col-6">
+                            <label class="input-heading">End Date</label>
+                            <mat-form-field appearance="outline">
+                                <input matInput formControlName="couponEndDate" (click)="endDate.open()" [matDatepicker]="endDate" [readonly]="true" name="endDate" placeholder="Select date" ngDefaultControl>
+                                <mat-datepicker-toggle [for]="endDate" matSuffix></mat-datepicker-toggle>
+                                <mat-datepicker #endDate></mat-datepicker>
+                            </mat-form-field>
+                            <app-form-error-msg [control]="addNewDiscountForm.controls.couponEndDate"></app-form-error-msg>
+                        </div>
+                        <div class="input-details col-6">
+                            <label class="input-heading">End Time</label>
+                            <mat-form-field appearance="outline">
+                                <input matInput type="time" name="endTime" formControlName="couponEndTime" placeholder="Select time">
+                                <!-- <ngx-material-timepicker-toggle matSuffix [for]="endTime" matSuffix></ngx-material-timepicker-toggle>
+                                <ngx-material-timepicker #endTime [defaultTime]="currentTime"></ngx-material-timepicker> -->
+                            </mat-form-field>
+                            <app-form-error-msg [control]="addNewDiscountForm.controls.couponEndTime"></app-form-error-msg>
+                        </div>
+                    </div>
+                    <div class="input-details">
+                        <label class="input-heading">Max Use Count</label>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" placeholder="Enter" formControlName="maxUseCount" appAllowOnlyNumbers>
+                        </mat-form-field>
+                        <app-form-error-msg [control]="addNewDiscountForm.controls.maxUseCount"></app-form-error-msg>
+                    </div>
+                    <div class="input-details" *ngIf="showCampaignUsageIntervalField">
+                        <label class="input-heading">Campaign Usage Interval (in minutes)</label>
+                        <mat-form-field appearance="outline">
+                            <input matInput type="text" placeholder="Enter" formControlName="campaignUsageIntervalinMins" appAllowOnlyNumbers>
+                        </mat-form-field>
+                        <app-form-error-msg [control]="addNewDiscountForm.controls.campaignUsageIntervalinMins"></app-form-error-msg>
+                    </div>
+                    <div class="d-flex">
+                        <button class="buttons w-100 h-3 me-3" mat-button (click)="closeAddNewDiscountModal()">dismiss</button>
+                        <button class="buttons active-button w-100 h-3" mat-button (click)="createDiscount()">add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #noDataFound>
+    <section class="d-flex flex-column justify-content-center align-items-center mt-5">
+        <img width="131" height="131" src="assets/icons/page404.svg">
+        <h3>Umm...no data found!</h3>
+    </section>
+</ng-template>
+<ng-template #kindlySelectDateRange>
+    <section class="d-flex flex-column justify-content-center align-items-center">
+        <img width="100" height="100" src="assets/icons/select-date-range-icon.svg">
+        <h4>Kindly select date range</h4>
+    </section>
+</ng-template>

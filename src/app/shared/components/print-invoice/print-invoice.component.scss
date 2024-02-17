@@ -1,0 +1,32 @@
+* {
+    font-size: 12px !important;
+    font-family: "Courier" !important;
+    td,
+    tr,
+    table {
+        width: 100% !important;
+
+        td.price {
+            text-align: right !important;
+            align-content: right !important;
+            font-weight: 600;
+        }
+    }
+}
+
+.centered {
+    text-align: center;
+    align-content: center;
+}
+.text-bold {
+    font-weight: 600;
+}
+
+.fs-18 {
+    font-size: 18px;
+}
+.custom-border {
+    padding: 5px 0;
+    border-top: 1px dashed #000;
+    border-bottom: 1px dashed #000;
+}
